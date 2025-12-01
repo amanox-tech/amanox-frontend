@@ -7,17 +7,19 @@ export function proxy(request) {
   const path = request.nextUrl.pathname;
 
   const authPages = ["/login", "/register", "/verify-otp"];
-  const isAuthPage = authPages.includes(path);
-  const isDashboard = path.startsWith("/dashboard");
+  const isAuthPage = authPages.some(
+    (p) => path === p || path.startsWith(`${p}/`),
+  );
 
+  const isDashboard = path.startsWith("/dashboard");
   const isAuthenticated = !!accessToken || !!refreshToken;
 
-  // --- 1. If logged in (access or refresh token), block login/register/verify pages ---
+  // Logged in → block login/register/verify pages
   if (isAuthenticated && isAuthPage) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // --- 2. If NOT logged in (no tokens), block dashboard ---
+  // Not logged in → block dashboard
   if (!isAuthenticated && isDashboard) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
@@ -30,6 +32,7 @@ export const config = {
     "/login",
     "/register",
     "/verify-otp",
+    "/verify-email/:path*", // <— ADDED
     "/dashboard/:path*",
   ],
 };

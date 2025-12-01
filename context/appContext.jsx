@@ -1,8 +1,7 @@
 "use client";
 
-
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "../api/axiosInstance";
+import api from "@/lib/axiosClient";
 import { toast } from "react-toastify";
 
 const AppContext = createContext(null);
@@ -25,36 +24,45 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const logoutUser = async (navigate) => {
+  const logoutUser = async () => {
     try {
       const { data } = await api.post("/api/v1/auth/logout");
       toast.success(data.message);
       setIsAuth(false);
       setUser(null);
-      navigate("/login");
     } catch {
       toast.error("Something went wrong");
     }
   };
 
   useEffect(() => {
-    fetchUser();
+    const pathname = window.location.pathname;
+
+    const publicRoutes = [
+      "/login",
+      "/register",
+      "/verify-otp",
+      "/verify-email",
+    ];
+    const isPublic = publicRoutes.some((p) => pathname.startsWith(p));
+
+    if (!isPublic) {
+      fetchUser();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
-  return (
-    <AppContext.Provider
-      value={{
-        user,
-        isAuth,
-        loading,
-        logoutUser,
-        setUser, // needed for OTP login
-        setIsAuth, // needed temporarily
-      }}
-    >
-      {children}
-    </AppContext.Provider>
-  );
+  const value = {
+    user,
+    isAuth,
+    loading,
+    logoutUser,
+    setUser,
+    setIsAuth,
+  };
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export const AppData = () => {

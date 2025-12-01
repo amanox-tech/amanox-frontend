@@ -1,25 +1,24 @@
 "use client";
 
-import React from "react";
 import { AppData } from "@/context/appContext";
 
-const DashboardPage = () => {
-  const { user } = AppData();
+export default function DashboardPage() {
+  const { user, loading } = AppData();
 
-  if (!user) {
+  if (loading) {
     return (
-      <div className="w-fit m-auto mt-40 text-xl font-semibold">
+      <div className="mt-40 text-center text-lg text-gray-700">
         Loading user...
       </div>
     );
   }
 
   return (
-    <div className="w-fit m-auto mt-40 text-xl font-semibold">
-      <div>Welcome, {user.name}</div>
-      <div className="text-gray-600 text-base mt-2">{user.email}</div>
+    <div className="mt-32 mx-auto max-w-lg text-center">
+      <h1 className="text-3xl font-semibold text-gray-900">
+        Welcome, {user?.name}
+      </h1>
+      <p className="text-gray-600 mt-2">{user?.email}</p>
     </div>
   );
-};
-
-export default DashboardPage;
+}

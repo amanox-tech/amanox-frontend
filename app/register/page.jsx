@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
-import api from "../../api/axiosInstance";
 import Link from "next/link";
+import api from "@/lib/axiosClient";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
@@ -24,94 +24,84 @@ const RegisterPage = () => {
 
       toast.success(data.message);
 
-      // Reset form fields after success
       setName("");
       setEmail("");
       setPassword("");
     } catch (error) {
-      const msg = error?.response?.data?.message || "Registration failed";
-      toast.error(msg);
+      toast.error(error?.response?.data?.message || "Registration failed");
     } finally {
       setBtnLoading(false);
     }
   };
 
   return (
-    <section className="text-gray-600 body-font">
-      <div className="container px-5 py-24 mx-auto flex flex-wrap items-center">
-        <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
-          <h1 className="title-font font-medium text-3xl text-gray-900">
-            Slow-carb next level shoindcgoitch ethical authentic, poko scenester
-          </h1>
-          <p className="leading-relaxed mt-4">
-            Poke slow-carb mixtape knausgaard, typewriter street art gentrify
-            hammock starladder roathse. Craies vegan tousled etsy austin.
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form
+        onSubmit={submitHandler}
+        className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg"
+      >
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
+          Create Account
+        </h2>
+
+        {/* NAME */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Name
+          </label>
+          <input
+            type="text"
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-300 outline-none"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
         </div>
-        <form
-          onSubmit={submitHandler}
-          className="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0"
+
+        {/* EMAIL */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-300 outline-none"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* PASSWORD */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Password
+          </label>
+          <input
+            type="password"
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-300 outline-none"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* BUTTON */}
+        <button
+          className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-70"
+          disabled={btnLoading}
         >
-          <h2 className="text-gray-900 text-lg font-medium title-font mb-5">
-            Sign Up
-          </h2>
-          <div className="relative mb-4">
-            <label htmlFor="name" className="leading-7 text-sm text-gray-600">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="relative mb-4">
-            <label htmlFor="email" className="leading-7 text-sm text-gray-600">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="relative mb-4">
-            <label
-              htmlFor="password"
-              className="leading-7 text-sm text-gray-600"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button
-            className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-            disabled={btnLoading}
-          >
-            {btnLoading ? "Submitting Data...." : "Button"}
-          </button>
-          <Link href={"/login"} className="text-xs text-gray-500 mt-3">
-            Have an Account ?
+          {btnLoading ? "Creating..." : "Sign Up"}
+        </button>
+
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Already have an account?{" "}
+          <Link href="/login" className="text-indigo-600 hover:underline">
+            Login
           </Link>
-        </form>
-      </div>
-    </section>
+        </p>
+      </form>
+    </div>
   );
 };
 
