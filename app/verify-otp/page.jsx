@@ -11,6 +11,8 @@ const VerifyOtpPage = () => {
   const [otp, setOtp] = useState("");
   const [btnLoading, setBtnLoading] = useState(false);
 
+  const [cooldown, setCooldown] = useState(0); // NEW: timer state
+
   const router = useRouter();
   const { setIsAuth, setUser } = AppData();
 
@@ -44,6 +46,36 @@ const VerifyOtpPage = () => {
     }
   };
 
+  const resendOtp = async () => {
+    try {
+      const email = localStorage.getItem("email");
+
+      if (!email) {
+        toast.error("Session expired. Please login again.");
+        router.push("/login");
+        return;
+      }
+
+      const { data } = await api.post("/api/v1/auth/resend-otp", { email });
+      toast.success(data.message);
+
+      // Start 60-second cooldown
+      setCooldown(60);
+
+      const interval = setInterval(() => {
+        setCooldown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Unable to resend OTP");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
@@ -68,12 +100,26 @@ const VerifyOtpPage = () => {
           />
         </div>
 
-        {/* BUTTON */}
+        {/* VERIFY BUTTON */}
         <button
           className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-70"
           disabled={btnLoading}
         >
           {btnLoading ? "Verifying..." : "Verify OTP"}
+        </button>
+
+        {/* RESEND OTP BUTTON */}
+        <button
+          type="button"
+          onClick={resendOtp}
+          disabled={cooldown > 0}
+          className={`w-full mt-3 text-sm ${
+            cooldown > 0
+              ? "text-gray-400 cursor-not-allowed"
+              : "text-indigo-600 hover:underline"
+          }`}
+        >
+          {cooldown > 0 ? `Resend OTP in ${cooldown}s` : "Resend OTP"}
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-4">

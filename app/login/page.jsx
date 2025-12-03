@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import api from "@/lib/axiosClient";
+import GoogleLoginButton from "@/components/GoogleLoginButton";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -43,6 +44,20 @@ const LoginPage = () => {
           Login
         </h2>
 
+        {/* Google Login */}
+        <div className="flex justify-center mb-6">
+          <GoogleLoginButton />
+        </div>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-2 text-gray-500">OR</span>
+          </div>
+        </div>
+
         {/* EMAIL */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -69,6 +84,15 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+        </div>
+
+        <div className="mb-4 text-right">
+          <Link
+            href="/forgot-password"
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            Forgot password?
+          </Link>
         </div>
 
         {/* BUTTON */}
