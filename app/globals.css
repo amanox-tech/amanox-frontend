@@ -1,32 +1,27 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* AMANOX BRAND COLORS */
-  --color-primary: #50c878; /* Amanox Mint */
-  --color-primary-dark: #3daf66;
-  --color-secondary: #2d303e; /* Amanox Charcoal */
-  --color-accent: #e0f7eb;
+  /* AMANOX BRAND COLORS (EXACT) */
+  --color-primary: #18cb96; /* Turquoise */
+  --color-primary-dark: #14a87b; /* 20% Darker for hover states */
+  --color-secondary: #373643; /* Dark Grey Blue */
+  --color-accent: #e8fcf6; /* Very light turquoise for inputs/bgs */
 
   /* OVERRIDES */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* SHADOWS */
-  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  /* SHADOWS (Tinted with the dark grey blue) */
+  --shadow-glass: 0 8px 32px 0 rgba(55, 54, 67, 0.08);
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #2d303e;
+  --background: #ffffff; /* Pure White */
+  --foreground: #373643; /* Dark Grey Blue Text */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f1115;
-    --foreground: #ededed;
-  }
-}
+/* NO DARK MODE OVERRIDES - FORCE BRAND COLORS */
 
 body {
   background: var(--background);
