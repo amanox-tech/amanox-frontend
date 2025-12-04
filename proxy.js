@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
 
 export function proxy(request) {
-  const accessToken = request.cookies.get("accessToken")?.value;
-  const refreshToken = request.cookies.get("refreshToken")?.value;
-
   const path = request.nextUrl.pathname;
 
-  const authPages = ["/login", "/register", "/verify-otp"];
-  const isAuthPage = authPages.some(
-    (p) => path === p || path.startsWith(`${p}/`),
-  );
-
-  const isDashboard = path.startsWith("/dashboard");
+  const accessToken = request.cookies.get("accessToken");
+  const refreshToken = request.cookies.get("refreshToken");
   const isAuthenticated = !!accessToken || !!refreshToken;
 
-  // Logged in → block login/register/verify pages
+  const AUTH_PAGES = ["/login", "/register", "/verify-otp"];
+  const isAuthPage = AUTH_PAGES.some((p) => path.startsWith(p));
+  const isDashboard = path.startsWith("/dashboard");
+
+  // Always allow verify-email route
+  if (path.startsWith("/verify-email")) {
+    return NextResponse.next();
+  }
+
+  // Already logged in → block login/register/verify
   if (isAuthenticated && isAuthPage) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
@@ -32,7 +34,7 @@ export const config = {
     "/login",
     "/register",
     "/verify-otp",
-    "/verify-email/:path*", // <— ADDED
+    "/verify-email/:path*",
     "/dashboard/:path*",
   ],
 };
