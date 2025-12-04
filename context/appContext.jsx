@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "@/lib/axiosClient";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const AppContext = createContext(null);
 
