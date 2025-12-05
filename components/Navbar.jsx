@@ -15,66 +15,107 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
-      {/* Container */}
-      <div className="w-full h-20 px-6 md:px-10 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 transition-all duration-300 supports-backdrop-filter:bg-white/60">
+      {/* Container - Aligned with Hero Section max-width */}
+      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-transparent via-primary to-transparent opacity-50"></div>
+
+      <div className="max-w-[1440px] mx-auto h-20 px-6 flex items-center justify-between">
         {/* LOGO - Left Side */}
-        <Link href="/" className="flex items-center group relative h-full">
-          {/* FIX APPLIED:
-            1. width/height set to 'auto' via style to maintain aspect ratio
-            2. mix-blend-multiply hides the white background box
-            3. object-contain ensures it fits nicely
-          */}
+        <Link
+          href="/"
+          className="flex items-center group relative bg-transparent"
+        >
           <Image
-            src="/amanox-logo.png"
+            // Added ?v=2 to force browser to ignore cache
+            src="/amanox-logo.png?v=2"
             alt="Amanox Logo"
             width={0}
             height={0}
             sizes="100vw"
-            style={{ width: "auto", height: "70px" }} // Fixed height, auto width
-            className="object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+            style={{ width: "auto", height: "48px" }}
+            // REMOVED mix-blend-multiply entirely
+            className="object-contain opacity-100 group-hover:opacity-80 transition-opacity duration-300 bg-transparent"
             priority
+            unoptimized={true} // Optional: Skips Next.js optimization cache if issues persist
           />
         </Link>
 
         {/* NAVIGATION ACTIONS - Right Side */}
-        <div className="flex items-center gap-6">
-          {!isAuth && (
+        <div className="flex items-center gap-4 sm:gap-6">
+          {!isAuth ? (
             <>
               <Link
                 href="/login"
-                className="text-sm font-semibold text-gray-500 hover:text-secondary transition-colors"
+                className="hidden sm:block text-sm font-semibold text-gray-500 hover:text-secondary transition-colors"
               >
                 Log In
               </Link>
 
               <Link
                 href="/register"
-                className="bg-secondary hover:bg-[#232530] text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                className="bg-secondary hover:bg-black text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-secondary/10 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
               >
                 Get Started
               </Link>
             </>
-          )}
-
-          {isAuth && (
+          ) : (
             <div className="flex items-center gap-4">
-              {/* Optional: Show User Name if available */}
-              {user && (
+              {/* Dashboard Button (Primary Action for Logged In) */}
+              <Link
+                href="/dashboard"
+                className="hidden sm:flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary px-5 py-2 rounded-full text-sm font-bold transition-all duration-300"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                  />
+                </svg>
+                Dashboard
+              </Link>
+
+              {/* User Profile / Logout */}
+              <div className="flex items-center gap-3 pl-2 sm:border-l border-gray-200">
+                {/* Mobile-only avatar placeholder or name */}
+                {user && (
+                  <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-xs font-bold sm:hidden">
+                    {user.name?.charAt(0)}
+                  </div>
+                )}
+
                 <span className="hidden md:block text-sm font-medium text-gray-500">
-                  Hi,{" "}
                   <span className="text-secondary font-bold">
-                    {user.name?.split(" ")[0]}
+                    {user?.name?.split(" ")[0]}
                   </span>
                 </span>
-              )}
 
-              <button
-                onClick={handleLogout}
-                className="border border-gray-200 text-gray-600 hover:text-red-500 hover:border-red-200 hover:bg-red-50 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300"
-              >
-                Sign out
-              </button>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all duration-200"
+                  title="Sign out"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -7,9 +8,9 @@ import api from "@/lib/axiosClient";
 import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
-  const [role, setRole] = useState("candidate"); // Default
-  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("candidate"); // Default role
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [btnLoading, setBtnLoading] = useState(false);
   const router = useRouter();
@@ -23,13 +24,11 @@ const RegisterPage = () => {
         name,
         email,
         password,
-        role, // Send the selected role
+        role,
       });
 
       toast.success(data.message);
-
-      // Redirect logic could be dynamic based on role later
-      router.push("/login"); // Or /verify-otp depending on your flow
+      router.push("/login");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Registration failed");
     } finally {
@@ -38,116 +37,30 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex font-sans bg-white pt-15">
+    <div className="min-h-screen w-full flex font-sans bg-white pt-15 overflow-hidden">
       {/* LEFT SIDE - FORM */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 lg:px-24 py-12 bg-white text-secondary relative z-10">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 lg:px-24 py-12 bg-white text-secondary relative z-20">
         <div className="w-full max-w-[440px]">
           {/* Header */}
-          <div className="mb-8 text-center lg:text-left">
+          <div className="mb-10 text-center lg:text-left">
             <h1 className="text-4xl font-bold tracking-tight text-secondary mb-3">
               Join Amanox
             </h1>
             <p className="text-gray-500 text-lg">
-              Select your profile type to get started.
+              Create your candidate profile to get started.
             </p>
           </div>
 
-          {/* ROLE SELECTOR */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <button
-              type="button"
-              onClick={() => setRole("candidate")}
-              className={`p-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center justify-center gap-2 ${
-                role === "candidate"
-                  ? "border-primary bg-primary/5 shadow-sm"
-                  : "border-gray-100 hover:border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  role === "candidate"
-                    ? "bg-primary text-white"
-                    : "bg-gray-100 text-gray-400"
-                }`}
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-              </div>
-              <div className="text-center">
-                <p
-                  className={`text-sm font-bold ${
-                    role === "candidate" ? "text-secondary" : "text-gray-500"
-                  }`}
-                >
-                  Job Seeker
-                </p>
-                <p className="text-[10px] text-gray-400">Optimize Resume</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setRole("recruiter")}
-              className={`p-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center justify-center gap-2 ${
-                role === "recruiter"
-                  ? "border-primary bg-primary/5 shadow-sm"
-                  : "border-gray-100 hover:border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  role === "recruiter"
-                    ? "bg-primary text-white"
-                    : "bg-gray-100 text-gray-400"
-                }`}
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-              </div>
-              <div className="text-center">
-                <p
-                  className={`text-sm font-bold ${
-                    role === "recruiter" ? "text-secondary" : "text-gray-500"
-                  }`}
-                >
-                  Recruiter
-                </p>
-                <p className="text-[10px] text-gray-400">Hire Talent</p>
-              </div>
-            </button>
-          </div>
-
           {/* Form */}
-          <form onSubmit={submitHandler} className="space-y-5">
+          <form onSubmit={submitHandler} className="space-y-6">
             {/* Name Field */}
             <div className="group space-y-2">
               <label className="text-sm font-semibold text-gray-700 ml-1">
-                {role === "recruiter" ? "Company / Full Name" : "Full Name"}
+                Full Name
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  {/* Icon turns Turquoise on focus */}
                   <svg
                     className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors duration-300"
                     xmlns="http://www.w3.org/2000/svg"
@@ -166,9 +79,7 @@ const RegisterPage = () => {
                 <input
                   type="text"
                   className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
-                  placeholder={
-                    role === "recruiter" ? "Amanox Inc." : "John Doe"
-                  }
+                  placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -179,7 +90,7 @@ const RegisterPage = () => {
             {/* Email Field */}
             <div className="group space-y-2">
               <label className="text-sm font-semibold text-gray-700 ml-1">
-                Email
+                Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -201,7 +112,7 @@ const RegisterPage = () => {
                 <input
                   type="email"
                   className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
-                  placeholder="email@example.com"
+                  placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -245,7 +156,7 @@ const RegisterPage = () => {
             {/* Submit Button */}
             <button
               disabled={btnLoading}
-              className="w-full mt-2 bg-secondary hover:bg-[#232530] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+              className="w-full bg-secondary hover:bg-[#232530] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
             >
               {btnLoading ? (
                 <>
@@ -272,7 +183,7 @@ const RegisterPage = () => {
                   <span>Creating Account...</span>
                 </>
               ) : (
-                "Sign Up"
+                "Create Account"
               )}
             </button>
 
@@ -290,40 +201,91 @@ const RegisterPage = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE - BRANDING */}
+      {/* RIGHT SIDE - BRANDING with "Data Stream" Animation */}
       <div className="hidden lg:flex lg:w-1/2 bg-secondary relative overflow-hidden items-center justify-center p-12">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary opacity-20 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/30 opacity-20 blur-[100px] rounded-full -translate-x-1/4 translate-y-1/4"></div>
+        {/* Dark Overlay/Grid for Tech feel */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[40px_40px]"></div>
 
+        {/* --- ANIMATION LAYER: Data Beams flowing Left to Right --- */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Beam 1 */}
+          <div className="absolute top-[20%] left-[-20%] w-[150%] h-0.5 bg-linear-to-r from-transparent via-primary/30 to-transparent animate-flow-fast"></div>
+          {/* Beam 2 */}
+          <div className="absolute top-[40%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-primary/20 to-transparent animate-flow-medium delay-700"></div>
+          {/* Beam 3 */}
+          <div className="absolute top-[60%] left-[-20%] w-[150%] h-[3px] bg-linear-to-r from-transparent via-primary/40 to-transparent animate-flow-slow delay-1000"></div>
+          {/* Beam 4 */}
+          <div className="absolute top-[80%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-blue-400/20 to-transparent animate-flow-medium delay-300"></div>
+        </div>
+
+        {/* Glow Orb in corner */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4"></div>
+
+        {/* Content Card */}
         <div className="relative z-10 max-w-lg text-white">
-          <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10">
-            <div className="w-8 h-8 rounded-full bg-primary shadow-[0_0_20px_rgba(24,203,150,0.6)]"></div>
+          <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-[0_0_40px_rgba(24,203,150,0.3)]">
+            <svg
+              className="w-8 h-8 text-primary animate-pulse"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
+            </svg>
           </div>
 
-          <h2 className="text-5xl font-bold leading-tight mb-6">
+          <h2 className="text-5xl font-bold leading-tight mb-6 tracking-tight">
             Accelerate your <br />
-            <span className="text-primary">Career Growth.</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-emerald-300">
+              Career Growth.
+            </span>
           </h2>
           <p className="text-gray-300 text-xl leading-relaxed opacity-90">
-            Create your account to access AI-powered resume analysis and stand
-            out in the job market.
+            Join thousands of professionals using Amanox to analyze, optimize,
+            and perfect their resumes.
           </p>
-
-          <div className="mt-12 p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-4">
-            <div className="flex -space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-300 border-2 border-secondary"></div>
-              <div className="w-10 h-10 rounded-full bg-gray-400 border-2 border-secondary"></div>
-              <div className="w-10 h-10 rounded-full bg-gray-500 border-2 border-secondary flex items-center justify-center text-xs font-bold text-secondary">
-                5.0
-              </div>
-            </div>
-            <div>
-              <p className="font-bold text-white">Top Rated Platform</p>
-              <p className="text-xs text-primary">Based on user reviews</p>
-            </div>
-          </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes flow {
+          0% {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          40% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+        .animate-flow-fast {
+          animation: flow 3s linear infinite;
+        }
+        .animate-flow-medium {
+          animation: flow 5s linear infinite;
+        }
+        .animate-flow-slow {
+          animation: flow 7s linear infinite;
+        }
+        .delay-300 {
+          animation-delay: 300ms;
+        }
+        .delay-700 {
+          animation-delay: 700ms;
+        }
+        .delay-1000 {
+          animation-delay: 1000ms;
+        }
+      `}</style>
     </div>
   );
 };

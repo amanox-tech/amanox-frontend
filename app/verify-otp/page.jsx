@@ -15,7 +15,7 @@ const VerifyOtpPage = () => {
   const router = useRouter();
   const { setIsAuth, setUser } = AppData();
 
-  // Check if email exists on mount
+  // Check session
   useEffect(() => {
     const email = localStorage.getItem("email");
     if (!email) {
@@ -79,106 +79,31 @@ const VerifyOtpPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-white font-sans relative overflow-hidden">
-      {/* Background Decoration (Subtle Amanox Glow) */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[100px]"></div>
-      </div>
-
-      {/* Main Card */}
-      <div className="w-full max-w-md p-8 bg-white border border-gray-100 rounded-2xl shadow-xl relative z-10">
-        {/* Header Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-primary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
-            </svg>
-          </div>
-        </div>
-
-        <h2 className="text-2xl font-bold text-center text-secondary mb-2">
-          Verify Identity
-        </h2>
-        <p className="text-center text-gray-500 mb-8 text-sm">
-          Enter the OTP sent to your email address.
-        </p>
-
-        <form onSubmit={submitHandler} className="space-y-6">
-          {/* OTP Input - Styled to look like a code field */}
-          <div className="relative">
-            <input
-              type="text"
-              inputMode="numeric"
-              maxLength={6}
-              className="w-full h-14 text-center text-2xl tracking-[0.5em] font-bold text-secondary border border-gray-300 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder-gray-300"
-              placeholder="000000"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-            />
+    <div className="min-h-screen w-full flex font-sans bg-white pt-15 overflow-hidden">
+      {/* --- LEFT SIDE - FORM (WHITE) --- */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 lg:px-24 py-12 bg-white text-secondary relative z-20">
+        <div className="w-full max-w-[440px]">
+          {/* Header */}
+          <div className="mb-10 text-center lg:text-left">
+            <h1 className="text-4xl font-bold tracking-tight text-secondary mb-3">
+              Verify Identity
+            </h1>
+            <p className="text-gray-500 text-lg">
+              Enter the 6-digit code sent to your email.
+            </p>
           </div>
 
-          {/* Verify Button */}
-          <button
-            disabled={btnLoading}
-            className="w-full bg-secondary hover:bg-[#232530] text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
-          >
-            {btnLoading ? (
-              <>
-                <svg
-                  className="animate-spin h-5 w-5 text-primary"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                <span>Verifying...</span>
-              </>
-            ) : (
-              "Confirm & Login"
-            )}
-          </button>
-
-          {/* Resend Logic */}
-          <div className="text-center mt-6">
-            <button
-              type="button"
-              onClick={resendOtp}
-              disabled={cooldown > 0}
-              className={`text-sm font-medium transition-colors ${
-                cooldown > 0
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "text-primary hover:text-primary-dark"
-              }`}
-            >
-              {cooldown > 0 ? (
-                <span className="flex items-center gap-2">
+          <form onSubmit={submitHandler} className="space-y-6">
+            {/* OTP Input */}
+            <div className="group space-y-2">
+              <label className="text-sm font-semibold text-gray-700 ml-1">
+                One-Time Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg
-                    className="w-4 h-4 animate-spin"
+                    className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors duration-300"
+                    xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -187,27 +112,189 @@ const VerifyOtpPage = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
-                  Resend code in {cooldown}s
-                </span>
+                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  className="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-bold text-2xl text-secondary tracking-[0.5em] text-center placeholder-gray-300"
+                  placeholder="000000"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Verify Button */}
+            <button
+              disabled={btnLoading}
+              className="w-full bg-secondary hover:bg-[#232530] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+            >
+              {btnLoading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 text-primary"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span>Verifying...</span>
+                </>
               ) : (
-                "Resend Code"
+                "Confirm Access"
               )}
             </button>
-          </div>
-        </form>
 
-        <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-          <Link
-            href="/login"
-            className="text-sm font-medium text-gray-500 hover:text-secondary transition-colors"
-          >
-            ← Back to Login
-          </Link>
+            {/* Resend Logic & Footer */}
+            <div className="flex flex-col items-center gap-4 mt-6">
+              <button
+                type="button"
+                onClick={resendOtp}
+                disabled={cooldown > 0}
+                className={`text-sm font-medium transition-colors ${
+                  cooldown > 0
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-primary hover:text-primary-dark"
+                }`}
+              >
+                {cooldown > 0 ? (
+                  <span className="flex items-center gap-2">
+                    <svg
+                      className="w-4 h-4 animate-spin"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    Resend code in {cooldown}s
+                  </span>
+                ) : (
+                  "Didn't receive code? Resend"
+                )}
+              </button>
+
+              <div className="w-full border-t border-gray-100 my-2"></div>
+
+              <Link
+                href="/login"
+                className="text-sm font-medium text-gray-500 hover:text-secondary transition-colors"
+              >
+                ← Back to Login
+              </Link>
+            </div>
+          </form>
         </div>
       </div>
+
+      {/* --- RIGHT SIDE - BRANDING (DARK + ANIMATION) --- */}
+      <div className="hidden lg:flex lg:w-1/2 bg-secondary relative overflow-hidden items-center justify-center p-12">
+        {/* Dark Overlay/Grid */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[40px_40px]"></div>
+
+        {/* --- ANIMATION LAYER: Data Beams --- */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Beam 1 */}
+          <div className="absolute top-[20%] left-[-20%] w-[150%] h-0.5 bg-linear-to-r from-transparent via-primary/30 to-transparent animate-flow-fast"></div>
+          {/* Beam 2 */}
+          <div className="absolute top-[40%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-primary/20 to-transparent animate-flow-medium delay-700"></div>
+          {/* Beam 3 */}
+          <div className="absolute top-[60%] left-[-20%] w-[150%] h-[3px] bg-linear-to-r from-transparent via-primary/40 to-transparent animate-flow-slow delay-1000"></div>
+          {/* Beam 4 */}
+          <div className="absolute top-[80%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-blue-400/20 to-transparent animate-flow-medium delay-300"></div>
+        </div>
+
+        {/* Glow Orb */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4"></div>
+
+        {/* Content Card */}
+        <div className="relative z-10 max-w-lg text-white">
+          <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-[0_0_40px_rgba(24,203,150,0.3)]">
+            <svg
+              className="w-8 h-8 text-primary animate-pulse"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+          </div>
+
+          <h2 className="text-5xl font-bold leading-tight mb-6 tracking-tight">
+            Secure <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-emerald-300">
+              Account Access.
+            </span>
+          </h2>
+          <p className="text-gray-300 text-xl leading-relaxed opacity-90">
+            We use advanced encryption and two-factor authentication to keep
+            your career data and personal information safe.
+          </p>
+        </div>
+      </div>
+
+      <style jsx global>{`
+        @keyframes flow {
+          0% {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          40% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+        .animate-flow-fast {
+          animation: flow 3s linear infinite;
+        }
+        .animate-flow-medium {
+          animation: flow 5s linear infinite;
+        }
+        .animate-flow-slow {
+          animation: flow 7s linear infinite;
+        }
+        .delay-300 {
+          animation-delay: 300ms;
+        }
+        .delay-700 {
+          animation-delay: 700ms;
+        }
+        .delay-1000 {
+          animation-delay: 1000ms;
+        }
+      `}</style>
     </div>
   );
 };

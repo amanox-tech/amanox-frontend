@@ -35,9 +35,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex font-sans bg-white pt-15">
+    <div className="min-h-screen w-full flex font-sans bg-white pt-15 overflow-hidden">
       {/* LEFT SIDE - FORM */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 lg:px-24 py-12 bg-white text-secondary relative z-10">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 lg:px-24 py-12 bg-white text-secondary relative z-20">
         <div className="w-full max-w-[440px]">
           {/* Header */}
           <div className="mb-10 text-center lg:text-left">
@@ -45,7 +45,7 @@ const LoginPage = () => {
               Welcome back
             </h1>
             <p className="text-gray-500 text-lg">
-              Log in to continue your journey with Amanox.
+              Log in to access your expert AI panel.
             </p>
           </div>
 
@@ -140,7 +140,7 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Submit Button - Uses Dark Grey Blue for solid contrast, looks premium */}
+            {/* Submit Button */}
             <button
               disabled={btnLoading}
               className="w-full bg-secondary hover:bg-[#232530] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
@@ -188,43 +188,91 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE - BRANDING */}
-      {/* Explicitly using the Dark Grey Blue (#373643) */}
+      {/* RIGHT SIDE - BRANDING with "Data Stream" Animation */}
       <div className="hidden lg:flex lg:w-1/2 bg-secondary relative overflow-hidden items-center justify-center p-12">
-        {/* Abstract Background Shapes (Using Turquoise #18cb96) */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary opacity-20 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/30 opacity-20 blur-[100px] rounded-full -translate-x-1/4 translate-y-1/4"></div>
+        {/* Dark Overlay/Grid for Tech feel */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[40px_40px]"></div>
+
+        {/* --- ANIMATION LAYER: Data Beams flowing Left to Right --- */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Beam 1 */}
+          <div className="absolute top-[20%] left-[-20%] w-[150%] h-0.5 bg-linear-to-r from-transparent via-primary/30 to-transparent animate-flow-fast"></div>
+          {/* Beam 2 */}
+          <div className="absolute top-[40%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-primary/20 to-transparent animate-flow-medium delay-700"></div>
+          {/* Beam 3 */}
+          <div className="absolute top-[60%] left-[-20%] w-[150%] h-[3px] bg-linear-to-r from-transparent via-primary/40 to-transparent animate-flow-slow delay-1000"></div>
+          {/* Beam 4 */}
+          <div className="absolute top-[80%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-blue-400/20 to-transparent animate-flow-medium delay-300"></div>
+        </div>
+
+        {/* Glow Orb in corner */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4"></div>
 
         {/* Content Card */}
         <div className="relative z-10 max-w-lg text-white">
-          <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10">
-            <div className="w-8 h-8 rounded-full bg-primary shadow-[0_0_20px_rgba(24,203,150,0.6)]"></div>
+          <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-[0_0_40px_rgba(24,203,150,0.3)]">
+            <svg
+              className="w-8 h-8 text-primary animate-pulse"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+              />
+            </svg>
           </div>
 
-          <h2 className="text-5xl font-bold leading-tight mb-6">
-            Redefine your <br />
-            <span className="text-primary">Professional Identity.</span>
+          <h2 className="text-5xl font-bold leading-tight mb-6 tracking-tight">
+            Unlock the power of <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-emerald-300">
+              Multi-Model Intelligence.
+            </span>
           </h2>
           <p className="text-gray-300 text-xl leading-relaxed opacity-90">
-            Join thousands of professionals using Amanox AI to craft world-class
-            resumes and unlock new career opportunities.
+            One login connects you to GPT-5, Gemini, and Grok. Optimize your
+            resume with the combined intelligence of the world&apos;s best AIs.
           </p>
-
-          <div className="mt-12 p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-4">
-            <div className="flex -space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-300 border-2 border-secondary"></div>
-              <div className="w-10 h-10 rounded-full bg-gray-400 border-2 border-secondary"></div>
-              <div className="w-10 h-10 rounded-full bg-gray-500 border-2 border-secondary flex items-center justify-center text-xs font-bold text-secondary">
-                +2k
-              </div>
-            </div>
-            <div>
-              <p className="font-bold text-white">Trusted Community</p>
-              <p className="text-xs text-primary">Joining is free & easy</p>
-            </div>
-          </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes flow {
+          0% {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          40% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+        .animate-flow-fast {
+          animation: flow 3s linear infinite;
+        }
+        .animate-flow-medium {
+          animation: flow 5s linear infinite;
+        }
+        .animate-flow-slow {
+          animation: flow 7s linear infinite;
+        }
+        .delay-300 {
+          animation-delay: 300ms;
+        }
+        .delay-700 {
+          animation-delay: 700ms;
+        }
+        .delay-1000 {
+          animation-delay: 1000ms;
+        }
+      `}</style>
     </div>
   );
 };
