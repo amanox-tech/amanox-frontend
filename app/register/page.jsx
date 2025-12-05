@@ -4,12 +4,15 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import api from "@/lib/axiosClient";
+import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
+  const [role, setRole] = useState("candidate"); // Default
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [btnLoading, setBtnLoading] = useState(false);
+  const router = useRouter();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -20,13 +23,13 @@ const RegisterPage = () => {
         name,
         email,
         password,
+        role, // Send the selected role
       });
 
       toast.success(data.message);
 
-      setName("");
-      setEmail("");
-      setPassword("");
+      // Redirect logic could be dynamic based on role later
+      router.push("/login"); // Or /verify-otp depending on your flow
     } catch (error) {
       toast.error(error?.response?.data?.message || "Registration failed");
     } finally {
@@ -40,13 +43,100 @@ const RegisterPage = () => {
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 lg:px-24 py-12 bg-white text-secondary relative z-10">
         <div className="w-full max-w-[440px]">
           {/* Header */}
-          <div className="mb-10 text-center lg:text-left">
+          <div className="mb-8 text-center lg:text-left">
             <h1 className="text-4xl font-bold tracking-tight text-secondary mb-3">
-              Create Account
+              Join Amanox
             </h1>
             <p className="text-gray-500 text-lg">
-              Start your journey with Amanox today.
+              Select your profile type to get started.
             </p>
+          </div>
+
+          {/* ROLE SELECTOR */}
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            <button
+              type="button"
+              onClick={() => setRole("candidate")}
+              className={`p-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center justify-center gap-2 ${
+                role === "candidate"
+                  ? "border-primary bg-primary/5 shadow-sm"
+                  : "border-gray-100 hover:border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  role === "candidate"
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-gray-400"
+                }`}
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <div className="text-center">
+                <p
+                  className={`text-sm font-bold ${
+                    role === "candidate" ? "text-secondary" : "text-gray-500"
+                  }`}
+                >
+                  Job Seeker
+                </p>
+                <p className="text-[10px] text-gray-400">Optimize Resume</p>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setRole("recruiter")}
+              className={`p-4 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center justify-center gap-2 ${
+                role === "recruiter"
+                  ? "border-primary bg-primary/5 shadow-sm"
+                  : "border-gray-100 hover:border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  role === "recruiter"
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-gray-400"
+                }`}
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+              </div>
+              <div className="text-center">
+                <p
+                  className={`text-sm font-bold ${
+                    role === "recruiter" ? "text-secondary" : "text-gray-500"
+                  }`}
+                >
+                  Recruiter
+                </p>
+                <p className="text-[10px] text-gray-400">Hire Talent</p>
+              </div>
+            </button>
           </div>
 
           {/* Form */}
@@ -54,11 +144,10 @@ const RegisterPage = () => {
             {/* Name Field */}
             <div className="group space-y-2">
               <label className="text-sm font-semibold text-gray-700 ml-1">
-                Full Name
+                {role === "recruiter" ? "Company / Full Name" : "Full Name"}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  {/* User Icon */}
                   <svg
                     className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors duration-300"
                     xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +166,9 @@ const RegisterPage = () => {
                 <input
                   type="text"
                   className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
-                  placeholder="John Doe"
+                  placeholder={
+                    role === "recruiter" ? "Amanox Inc." : "John Doe"
+                  }
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -88,7 +179,7 @@ const RegisterPage = () => {
             {/* Email Field */}
             <div className="group space-y-2">
               <label className="text-sm font-semibold text-gray-700 ml-1">
-                Email Address
+                Email
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -110,7 +201,7 @@ const RegisterPage = () => {
                 <input
                   type="email"
                   className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
-                  placeholder="name@company.com"
+                  placeholder="email@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -201,11 +292,9 @@ const RegisterPage = () => {
 
       {/* RIGHT SIDE - BRANDING */}
       <div className="hidden lg:flex lg:w-1/2 bg-secondary relative overflow-hidden items-center justify-center p-12">
-        {/* Abstract Background Shapes */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary opacity-20 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/30 opacity-20 blur-[100px] rounded-full -translate-x-1/4 translate-y-1/4"></div>
 
-        {/* Content Card */}
         <div className="relative z-10 max-w-lg text-white">
           <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10">
             <div className="w-8 h-8 rounded-full bg-primary shadow-[0_0_20px_rgba(24,203,150,0.6)]"></div>
@@ -220,7 +309,6 @@ const RegisterPage = () => {
             out in the job market.
           </p>
 
-          {/* Review Badge */}
           <div className="mt-12 p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-4">
             <div className="flex -space-x-3">
               <div className="w-10 h-10 rounded-full bg-gray-300 border-2 border-secondary"></div>
