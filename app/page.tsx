@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AppData } from "@/context/appContext";
+import Image from "next/image";
 
 export default function Home() {
   const { isAuth } = AppData();
@@ -73,13 +74,31 @@ export default function Home() {
 
             <div className="mt-12 flex items-center gap-6 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
               <span className="text-sm font-bold flex items-center gap-1">
-                <span className="text-green-600 text-lg">●</span> OpenAI
+                <Image
+                  src="/icons/openai.svg"
+                  alt="OpenAI"
+                  width={20}
+                  height={20}
+                />{" "}
+                OpenAI
               </span>
               <span className="text-sm font-bold flex items-center gap-1">
-                <span className="text-blue-600 text-lg">●</span> Google
+                <Image
+                  src="/icons/google.svg"
+                  alt="OpenAI"
+                  width={20}
+                  height={20}
+                />{" "}
+                Google
               </span>
               <span className="text-sm font-bold flex items-center gap-1">
-                <span className="text-black text-lg">●</span> xAI
+                <Image
+                  src="/icons/XAI.svg"
+                  alt="OpenAI"
+                  width={20}
+                  height={20}
+                />{" "}
+                xAI
               </span>
             </div>
           </div>

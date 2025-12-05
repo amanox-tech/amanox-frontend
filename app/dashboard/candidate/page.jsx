@@ -24,7 +24,6 @@ export default function CandidateDashboard() {
   const router = useRouter();
 
   // --- 1. ROLE PROTECTION ---
-  // If a Recruiter accidentally lands here, bounce them to their own dashboard
   useEffect(() => {
     if (!userLoading && user && user.role === "recruiter") {
       router.replace("/dashboard/recruiter");
@@ -88,19 +87,20 @@ export default function CandidateDashboard() {
 
       setIsAnalyzing(true);
 
-      const formData = new FormData();
-      formData.append("resume", file);
-      formData.append("models", JSON.stringify(selectedModels));
-
-      // Send JD only if in Match Mode
-      if (isJobMatchMode) {
-        formData.append("jobDescription", jobDescription);
-      }
-
       try {
+        const formData = new FormData();
+        formData.append("resume", file);
+        formData.append("models", JSON.stringify(selectedModels));
+        if (isJobMatchMode) formData.append("jobDescription", jobDescription);
+
         const { data } = await api.post("/api/v1/resume/analyze", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+
+        // if backend returns success false, throw
+        if (!data?.success) {
+          throw new Error(data?.message || "Analysis failed");
+        }
 
         toast.success(
           isJobMatchMode
@@ -109,11 +109,15 @@ export default function CandidateDashboard() {
         );
 
         const result = data.data;
+
         const newEntry = {
           id: Date.now(),
-          score: result.score,
+          score:
+            typeof result.score === "number"
+              ? result.score
+              : Math.round((result?.section_scores?.impact ?? 0) * 0.01 * 100),
           type: isJobMatchMode ? "Job Match" : "General Scan",
-          summary: result.summary_candidate || result.summary, // Prefer candidate summary for history
+          summary: result.summary_candidate || result.summary || "",
           date: new Date().toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
@@ -130,11 +134,16 @@ export default function CandidateDashboard() {
         localStorage.setItem("resumeHistory", JSON.stringify(updatedHistory));
         localStorage.setItem("analysisResult", JSON.stringify(result));
 
-        router.push("/analysis");
+        // optional: small delay so user sees toast
+        setTimeout(() => {
+          setIsAnalyzing(false);
+          router.push("/analysis");
+        }, 250);
       } catch (error) {
         console.error(error);
         toast.error(
           error?.response?.data?.message ||
+            error?.message ||
             "Analysis failed. Please try again.",
         );
         setIsAnalyzing(false);
@@ -152,6 +161,7 @@ export default function CandidateDashboard() {
     },
     maxFiles: 1,
     multiple: false,
+    disabled: isAnalyzing,
   });
 
   const handleViewScan = (scanItem) => {
@@ -159,7 +169,7 @@ export default function CandidateDashboard() {
     router.push("/analysis");
   };
 
-  if (userLoading) return null; // Or loading spinner
+  if (userLoading) return null;
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pt-32 pb-12 px-6">
@@ -194,52 +204,51 @@ export default function CandidateDashboard() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {EXPERT_MODELS.map((model) => (
-                  <button
-                    key={model.id}
-                    onClick={() => toggleModel(model.id)}
-                    className={`
-                      relative p-3 rounded-xl border text-left transition-all duration-200
-                      ${
-                        selectedModels.includes(model.id)
+                {EXPERT_MODELS.map((model) => {
+                  const selected = selectedModels.includes(model.id);
+                  return (
+                    <button
+                      key={model.id}
+                      onClick={() => toggleModel(model.id)}
+                      disabled={isAnalyzing}
+                      className={`relative p-3 rounded-xl border text-left transition-all duration-200 ${
+                        selected
                           ? "border-primary bg-primary/5 shadow-sm"
                           : "border-gray-100 hover:border-gray-300 hover:bg-gray-50"
-                      }
-                    `}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span
-                        className={`text-xs font-bold ${
-                          selectedModels.includes(model.id)
-                            ? "text-primary"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {model.desc}
-                      </span>
-                      {selectedModels.includes(model.id) && (
-                        <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
-                          <svg
-                            className="w-2.5 h-2.5 text-white"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={4}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-sm font-bold text-secondary">
-                      {model.name}
-                    </p>
-                  </button>
-                ))}
+                      } ${isAnalyzing ? "opacity-60 pointer-events-none" : ""}`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span
+                          className={`text-xs font-bold ${
+                            selected ? "text-primary" : "text-gray-500"
+                          }`}
+                        >
+                          {model.desc}
+                        </span>
+                        {selected && (
+                          <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-2.5 h-2.5 text-white"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={4}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-sm font-bold text-secondary">
+                        {model.name}
+                      </p>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -273,8 +282,8 @@ export default function CandidateDashboard() {
                           : "text-gray-500"
                       }`}
                     >
-                      Job Match
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                      Job Match{" "}
+                      <span className="w-1.5 h-1.5 bg-primary rounded-full" />
                     </button>
                   </div>
                 </div>
@@ -301,15 +310,11 @@ export default function CandidateDashboard() {
 
                 <div
                   {...getRootProps()}
-                  className={`
-                    flex-1 border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all cursor-pointer
-                    ${
-                      isDragActive
-                        ? "border-primary bg-primary/5 scale-[0.99]"
-                        : "border-gray-200 hover:border-primary/50 hover:bg-gray-50"
-                    }
-                    ${isAnalyzing ? "pointer-events-none opacity-50" : ""}
-                  `}
+                  className={`flex-1 border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all cursor-pointer ${
+                    isDragActive
+                      ? "border-primary bg-primary/5 scale-[0.99]"
+                      : "border-gray-200 hover:border-primary/50 hover:bg-gray-50"
+                  } ${isAnalyzing ? "pointer-events-none opacity-50" : ""}`}
                 >
                   <input {...getInputProps()} />
                   <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -338,7 +343,7 @@ export default function CandidateDashboard() {
                     <h3 className="text-xl font-bold text-secondary">
                       {isJobMatchMode
                         ? "Comparing Resume..."
-                        : `Analyzing Profile...`}
+                        : "Analyzing Profile..."}
                     </h3>
                     <p className="text-gray-500 text-sm mt-2">
                       Consulting with {selectedModels.length} AI Experts
