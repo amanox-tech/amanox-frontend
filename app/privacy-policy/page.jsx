@@ -239,7 +239,7 @@ export default function PrivacyPolicyPage() {
             </ul>
             <p className="mt-2">
               To exercise any of these rights, contact us at{" "}
-              <span className="font-semibold">privacy@amanox.ai</span>. We may
+              <span className="font-semibold">contact@amanox.in</span>. We may
               need to verify your identity before responding.
             </p>
           </section>
@@ -275,7 +275,7 @@ export default function PrivacyPolicyPage() {
             <p>
               If you have questions about this policy or how we handle data,
               please contact{" "}
-              <span className="font-semibold">privacy@amanox.ai</span> or use
+              <span className="font-semibold">contact@amanox.in</span> or use
               the contact form on our{" "}
               <a
                 href="/contact"

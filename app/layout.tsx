@@ -6,6 +6,27 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+export const metadata = {
+  title: "Amanox – Free AI Resume Analyzer | GPT-5, Gemini, Grok Powered",
+  description:
+    "Analyze your resume with Amanox AI — a powerful multi-model engine using GPT-5, Gemini, and Grok. Get ATS score, job match score, missing keywords, impact improvements, recruiter-level insights, and professional rewrites for free.",
+  keywords: [
+    "AI resume analyzer",
+    "ATS resume checker",
+    "resume score checker",
+    "GPT-5 resume analysis",
+    "AI resume builder",
+    "resume keyword checker",
+    "job description match",
+    "resume improvement tool",
+    "AI job seeker tools",
+    "Amanox Resume",
+    "Grok resume analysis",
+    "Gemini resume checker",
+    " resume ats",
+  ],
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">

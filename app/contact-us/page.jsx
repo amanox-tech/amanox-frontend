@@ -131,11 +131,11 @@ export default function ContactPage() {
               <div className="space-y-2 text-sm">
                 <p className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  <span>Support email: support@amanox.ai</span>
+                  <span>Support email: contact@amanox.in</span>
                 </p>
                 <p className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  <span>Product feedback: feedback@amanox.ai</span>
+                  <span>Product feedback: contact@amanox.in</span>
                 </p>
               </div>
             </div>

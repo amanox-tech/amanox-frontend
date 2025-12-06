@@ -149,7 +149,7 @@ export default function CookiePolicyPage() {
             </h2>
             <p>
               If you have questions about our use of cookies, contact{" "}
-              <span className="font-semibold">privacy@amanox.ai</span>.
+              <span className="font-semibold">contact@amanox.in</span>.
             </p>
           </section>
         </div>

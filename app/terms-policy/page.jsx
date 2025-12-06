@@ -248,7 +248,7 @@ export default function TermsPage() {
             </h2>
             <p>
               If you have questions about these Terms, contact us at{" "}
-              <span className="font-semibold">legal@amanox.ai</span>.
+              <span className="font-semibold">contact@amanox.in</span>.
             </p>
           </section>
         </div>
