@@ -3,15 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { AppData } from "@/context/appContext";
-import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { isAuth, user, logoutUser } = AppData();
-  const router = useRouter();
 
   const handleLogout = async () => {
     await logoutUser();
-    router.push("/login");
   };
 
   return (

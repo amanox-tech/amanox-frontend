@@ -31,15 +31,18 @@ export const AppProvider = ({ children }) => {
     try {
       const { data } = await api.post("/api/v1/auth/logout");
       toast.success(data.message);
+
+      // ✅ Clear state first
       setIsAuth(false);
       setUser(null);
+
+      // ✅ Force redirect to login (use window.location for hard navigation)
+      window.location.href = "/login";
     } catch {
       toast.error("Logout failed");
     }
   };
 
-  // Run once on mount. We don't care about the route.
-  // If the cookie exists, we get the user. If not, we remain guest.
   useEffect(() => {
     fetchUser();
   }, []);
