@@ -4,8 +4,8 @@ export function proxy(request) {
   console.log("MIDDLEWARE COOKIES:", request.cookies.getAll());
   const path = request.nextUrl.pathname;
 
-  const accessToken = request.cookies.get("accessToken");
-  const refreshToken = request.cookies.get("refreshToken");
+  const accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
   const isAuthenticated = !!accessToken || !!refreshToken;
 
   const AUTH_PAGES = ["/login", "/register", "/verify-otp"];
