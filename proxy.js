@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 export function proxy(request) {
+  console.log("MIDDLEWARE COOKIES:", request.cookies.getAll());
   const path = request.nextUrl.pathname;
 
   const accessToken = request.cookies.get("accessToken");
