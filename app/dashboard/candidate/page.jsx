@@ -1,67 +1,87 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { AppData } from "@/context/appContext";
-import { useDropzone } from "react-dropzone";
-import api from "@/lib/axiosClient";
-import { toast } from "react-hot-toast";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDropzone } from "react-dropzone";
+import { toast } from "react-hot-toast";
+import { AppData } from "@/context/appContext";
+import api from "@/lib/axiosClient";
+import BuyCoinsModal from "./components/BuyCoinsModal";
+import CoinHistoryModal from "./components/CoinHistoryModal";
+import PaymentHistoryModal from "./components/PaymentHistoryModal";
+import { usePayment } from "./hooks/usePayment";
 
-// --- THE EXPERT 3 (Top Value Models) ---
 const EXPERT_MODELS = [
-  { id: "openai", name: "GPT-5 Mini", desc: "OpenAI", color: "bg-green-600" },
-  {
-    id: "gemini",
-    name: "Gemini 2.5 Flash",
-    desc: "Google",
-    color: "bg-blue-500",
-  },
-  { id: "deepseek", name: "Grok-3 Mini", desc: "xAI", color: "bg-purple-600" },
+  { id: "openai", name: "GPT-5 Mini", desc: "OpenAI" },
+  { id: "gemini", name: "Gemini 2.5 Flash", desc: "Google" },
+  { id: "grok", name: "Grok-3 Mini", desc: "xAI" },
 ];
 
 export default function CandidateDashboard() {
-  const { user, loading: userLoading } = AppData();
   const router = useRouter();
-
-  // --- 1. ROLE PROTECTION ---
-  useEffect(() => {
-    if (!userLoading && user && user.role === "recruiter") {
-      router.replace("/dashboard/recruiter");
-    }
-  }, [user, userLoading, router]);
+  const { user, loading: userLoading, fetchUser } = AppData();
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [history, setHistory] = useState([]);
 
-  // Job Match States
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  const [isCoinHistoryOpen, setIsCoinHistoryOpen] = useState(false);
+  const [isPaymentHistoryOpen, setIsPaymentHistoryOpen] = useState(false);
+
   const [isJobMatchMode, setIsJobMatchMode] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
 
-  // Default Models
   const [selectedModels, setSelectedModels] = useState([
     "openai",
     "gemini",
-    "deepseek",
+    "grok",
   ]);
+
+  const {
+    handlePurchase,
+    coinHistory,
+    paymentHistory,
+    fetchCoinHistory,
+    fetchPaymentHistory,
+  } = usePayment({ fetchUser });
+
+  // Role protection
+  useEffect(() => {
+    if (!userLoading && user && user.role === "recruiter") {
+      router.replace("/dashboard/recruiter");
+    }
+  }, [router, user, userLoading]);
+
+  // Local resume history
+  useEffect(() => {
+    const storedHistory = localStorage.getItem("resumeHistory");
+    if (!storedHistory) return;
+
+    try {
+      setHistory(JSON.parse(storedHistory));
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  // Fetch histories when modals open
+  useEffect(() => {
+    if (isCoinHistoryOpen) {
+      fetchCoinHistory();
+    }
+  }, [isCoinHistoryOpen, fetchCoinHistory]);
+
+  useEffect(() => {
+    if (isPaymentHistoryOpen) {
+      fetchPaymentHistory();
+    }
+  }, [isPaymentHistoryOpen, fetchPaymentHistory]);
 
   const toggleModel = (id) => {
     setSelectedModels((prev) =>
       prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id],
     );
   };
-
-  useEffect(() => {
-    const storedHistory = localStorage.getItem("resumeHistory");
-    if (storedHistory) {
-      try {
-        setHistory(JSON.parse(storedHistory));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }, []);
-
-  const lastScan = history.length > 0 ? history[0] : null;
 
   const onDrop = useCallback(
     async (acceptedFiles) => {
@@ -85,19 +105,25 @@ export default function CandidateDashboard() {
         return;
       }
 
+      if (user?.coins < selectedModels.length) {
+        toast.error("Not enough coins for selected models.");
+        return;
+      }
+
       setIsAnalyzing(true);
 
       try {
         const formData = new FormData();
         formData.append("resume", file);
         formData.append("models", JSON.stringify(selectedModels));
-        if (isJobMatchMode) formData.append("jobDescription", jobDescription);
+        if (isJobMatchMode) {
+          formData.append("jobDescription", jobDescription);
+        }
 
         const { data } = await api.post("/api/v1/resume/analyze", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        // if backend returns success false, throw
         if (!data?.success) {
           throw new Error(data?.message || "Analysis failed");
         }
@@ -109,6 +135,9 @@ export default function CandidateDashboard() {
         );
 
         const result = data.data;
+
+        // Refresh user to update coins
+        await fetchUser();
 
         const newEntry = {
           id: Date.now(),
@@ -134,7 +163,6 @@ export default function CandidateDashboard() {
         localStorage.setItem("resumeHistory", JSON.stringify(updatedHistory));
         localStorage.setItem("analysisResult", JSON.stringify(result));
 
-        // optional: small delay so user sees toast
         setTimeout(() => {
           setIsAnalyzing(false);
           router.push("/analysis");
@@ -149,7 +177,14 @@ export default function CandidateDashboard() {
         setIsAnalyzing(false);
       }
     },
-    [router, selectedModels, isJobMatchMode, jobDescription],
+    [
+      jobDescription,
+      isJobMatchMode,
+      router,
+      selectedModels,
+      fetchUser,
+      user?.coins,
+    ],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -161,7 +196,7 @@ export default function CandidateDashboard() {
     },
     maxFiles: 1,
     multiple: false,
-    disabled: isAnalyzing,
+    disabled: isAnalyzing || (user?.coins ?? 0) < selectedModels.length,
   });
 
   const handleViewScan = (scanItem) => {
@@ -171,6 +206,8 @@ export default function CandidateDashboard() {
 
   if (userLoading) return null;
 
+  const lastScan = history.length > 0 ? history[0] : null;
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] pt-32 pb-12 px-6">
       <div className="max-w-[1200px] mx-auto">
@@ -179,7 +216,9 @@ export default function CandidateDashboard() {
           <div>
             <h1 className="text-3xl font-bold text-secondary">
               Good evening,{" "}
-              <span className="text-primary">{user?.name?.split(" ")[0]}</span>
+              <span className="text-primary">
+                {user?.name ? user.name.split(" ")[0] : ""}
+              </span>
             </h1>
             <p className="text-gray-500 mt-2">Ready to land your dream job?</p>
           </div>
@@ -191,6 +230,7 @@ export default function CandidateDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* LEFT: Models + Upload */}
           <div className="lg:col-span-2 flex flex-col gap-6">
             {/* MODEL SELECTOR */}
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
@@ -209,6 +249,7 @@ export default function CandidateDashboard() {
                   return (
                     <button
                       key={model.id}
+                      type="button"
                       onClick={() => toggleModel(model.id)}
                       disabled={isAnalyzing}
                       className={`relative p-3 rounded-xl border text-left transition-all duration-200 ${
@@ -250,11 +291,36 @@ export default function CandidateDashboard() {
                   );
                 })}
               </div>
+
+              {/* COIN COST BAR */}
+              <div className="mt-4 p-3 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium">
+                    Total Cost
+                  </p>
+                  <p className="text-lg font-bold text-secondary">
+                    {selectedModels.length} Coin
+                    {selectedModels.length > 1 ? "s" : ""}
+                  </p>
+                </div>
+
+                <div
+                  className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    (user?.coins ?? 0) >= selectedModels.length
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-600"
+                  }`}
+                >
+                  {(user?.coins ?? 0) >= selectedModels.length
+                    ? "Sufficient Balance"
+                    : "Insufficient Coins"}
+                </div>
+              </div>
             </div>
 
             {/* UPLOAD CARD */}
             <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 relative overflow-hidden group transition-all duration-300 min-h-[300px] flex flex-col">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
               <div className="relative z-10 flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
@@ -265,6 +331,7 @@ export default function CandidateDashboard() {
                   {/* TOGGLE */}
                   <div className="flex items-center bg-gray-100 p-1 rounded-full">
                     <button
+                      type="button"
                       onClick={() => setIsJobMatchMode(false)}
                       className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all ${
                         !isJobMatchMode
@@ -275,6 +342,7 @@ export default function CandidateDashboard() {
                       General
                     </button>
                     <button
+                      type="button"
                       onClick={() => setIsJobMatchMode(true)}
                       className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all flex items-center gap-1 ${
                         isJobMatchMode
@@ -314,7 +382,11 @@ export default function CandidateDashboard() {
                     isDragActive
                       ? "border-primary bg-primary/5 scale-[0.99]"
                       : "border-gray-200 hover:border-primary/50 hover:bg-gray-50"
-                  } ${isAnalyzing ? "pointer-events-none opacity-50" : ""}`}
+                  } ${
+                    isAnalyzing || (user?.coins ?? 0) < selectedModels.length
+                      ? "pointer-events-none opacity-40"
+                      : ""
+                  }`}
                 >
                   <input {...getInputProps()} />
                   <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -339,7 +411,7 @@ export default function CandidateDashboard() {
 
                 {isAnalyzing && (
                   <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-3xl">
-                    <div className="w-16 h-16 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-4"></div>
+                    <div className="w-16 h-16 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-4" />
                     <h3 className="text-xl font-bold text-secondary">
                       {isJobMatchMode
                         ? "Comparing Resume..."
@@ -356,8 +428,90 @@ export default function CandidateDashboard() {
 
           {/* RIGHT COLUMN */}
           <div className="flex flex-col gap-6">
+            {/* COIN WALLET */}
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-400 font-medium mb-1">
+                  Your Coins
+                </p>
+                <h2 className="text-3xl font-bold text-secondary">
+                  {user?.coins ?? 0}
+                </h2>
+              </div>
+
+              <div className="flex flex-col gap-3 items-end">
+                <button
+                  type="button"
+                  onClick={() => setIsBuyModalOpen(true)}
+                  className="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm hover:bg-primary/90 active:scale-[0.98] transition-all"
+                >
+                  Buy Coins
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsCoinHistoryOpen(true)}
+                    className="flex items-center gap-1.5 text-secondary px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 hover:bg-gray-200 transition-all"
+                  >
+                    <svg
+                      className="w-4 h-4 text-primary"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.2}
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6v6l4 2"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21 12A9 9 0 118 3"
+                      />
+                    </svg>
+                    Coin History
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsPaymentHistoryOpen(true)}
+                    className="flex items-center gap-1.5 text-secondary px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 hover:bg-gray-200 transition-all"
+                  >
+                    <svg
+                      className="w-4 h-4 text-primary"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.2}
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 3h18v18H3z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 10h18"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M7 15h1m4 0h1m4 0h1"
+                      />
+                    </svg>
+                    Payments
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* LAST SCORE */}
             <div className="bg-secondary text-white rounded-3xl p-6 shadow-lg relative overflow-hidden">
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl" />
               <p className="text-gray-300 text-sm font-medium mb-1">
                 Last Resume Score
               </p>
@@ -369,6 +523,7 @@ export default function CandidateDashboard() {
               </div>
             </div>
 
+            {/* RECENT SCANS */}
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex-1 flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-secondary">Recent Scans</h3>
@@ -380,10 +535,11 @@ export default function CandidateDashboard() {
                   </p>
                 ) : (
                   history.map((scan) => (
-                    <div
+                    <button
                       key={scan.id}
+                      type="button"
                       onClick={() => handleViewScan(scan)}
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-primary/5 cursor-pointer transition-all"
+                      className="flex items-center justify-between w-full p-3 rounded-xl bg-gray-50 hover:bg-primary/5 cursor-pointer transition-all text-left"
                     >
                       <div className="overflow-hidden">
                         <p className="text-sm font-bold text-secondary truncate w-32">
@@ -400,7 +556,7 @@ export default function CandidateDashboard() {
                       >
                         {scan.score}
                       </span>
-                    </div>
+                    </button>
                   ))
                 )}
               </div>
@@ -408,6 +564,30 @@ export default function CandidateDashboard() {
           </div>
         </div>
       </div>
+
+      {/* MODALS */}
+      {isBuyModalOpen && (
+        <BuyCoinsModal
+          onClose={() => setIsBuyModalOpen(false)}
+          onBuy={(coins) =>
+            handlePurchase(coins, user, () => setIsBuyModalOpen(false))
+          }
+        />
+      )}
+
+      {isCoinHistoryOpen && (
+        <CoinHistoryModal
+          history={coinHistory}
+          onClose={() => setIsCoinHistoryOpen(false)}
+        />
+      )}
+
+      {isPaymentHistoryOpen && (
+        <PaymentHistoryModal
+          history={paymentHistory}
+          onClose={() => setIsPaymentHistoryOpen(false)}
+        />
+      )}
     </div>
   );
 }

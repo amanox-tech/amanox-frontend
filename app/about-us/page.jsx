@@ -166,7 +166,9 @@ export default function AboutPage() {
 
           <div className="bg-secondary text-white rounded-2xl shadow-[0_18px_45px_-22px_rgba(15,23,42,0.7)] p-6 relative overflow-hidden">
             <div className="absolute -bottom-24 -right-20 w-56 h-56 rounded-full bg-primary/25 blur-3xl" />
-            <h2 className="text-lg font-bold mb-2">Designed for recruiters.</h2>
+            <h2 className="text-lg font-bold mb-2">
+              Designed for recruiters (coming soon).
+            </h2>
             <p className="text-sm text-gray-100/80 mb-4">
               Recruiter accounts get a more critical, signal-focused view:
               strengths, risks and fit for the role – without fluff.
@@ -209,8 +211,8 @@ export default function AboutPage() {
                 We only store what we need to run your account: your name,
                 email, hashed password and basic session data. Resume files are
                 processed in memory and not kept after analysis. We route AI
-                calls through trusted providers like OpenRouter, and
-                continuously review how data flows through the system.
+                calls through trusted providers and continuously review how data
+                flows through the system.
               </p>
               <div className="flex flex-wrap gap-3 text-xs">
                 <Link
@@ -220,7 +222,7 @@ export default function AboutPage() {
                   Read our Privacy Policy
                 </Link>
                 <Link
-                  href="/terms"
+                  href="/terms-policy"
                   className="inline-flex items-center px-4 py-2 rounded-full border border-transparent bg-secondary hover:bg-black text-white font-semibold transition-all"
                 >
                   View Terms of Service

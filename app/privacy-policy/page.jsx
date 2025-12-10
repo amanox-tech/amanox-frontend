@@ -182,7 +182,7 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2">
               For more detail, please see our{" "}
               <a
-                href="/cookies"
+                href="/cookies-policy"
                 className="text-primary font-semibold hover:text-primary/80"
               >
                 Cookie Policy
@@ -278,7 +278,7 @@ export default function PrivacyPolicyPage() {
               <span className="font-semibold">contact@amanox.in</span> or use
               the contact form on our{" "}
               <a
-                href="/contact"
+                href="/contact-us"
                 className="text-primary font-semibold hover:text-primary/80"
               >
                 Contact page
