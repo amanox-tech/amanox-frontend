@@ -1,19 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 export default function ContactPage() {
-  const [loading, setLoading] = useState(false);
-
-  // purely UI – you can wire this to API later
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    // TODO: call your backend / ticket system
-    setTimeout(() => setLoading(false), 800);
-  };
-
   return (
     <div className="min-h-screen bg-[#f5f7fb] pt-24 pb-20 font-sans">
       <div className="max-w-[1120px] mx-auto px-6 lg:px-0">
@@ -45,80 +34,6 @@ export default function ContactPage() {
 
         {/* Main layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8">
-          {/* Form card */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_18px_45px_-22px_rgba(15,23,42,0.25)] p-6 sm:p-7">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Full Name" required>
-                  <input
-                    required
-                    className="w-full px-3.5 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
-                    placeholder="Jane Doe"
-                  />
-                </Field>
-                <Field label="Email" required>
-                  <input
-                    type="email"
-                    required
-                    className="w-full px-3.5 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
-                    placeholder="you@company.com"
-                  />
-                </Field>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="I'm contacting you as">
-                  <select className="w-full px-3.5 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
-                    <option>Candidate</option>
-                    <option>Student</option>
-                    <option>Recruiter / Hiring Manager</option>
-                    <option>Career Coach</option>
-                    <option>Other</option>
-                  </select>
-                </Field>
-                <Field label="Topic">
-                  <select className="w-full px-3.5 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
-                    <option>Product support</option>
-                    <option>Feature idea</option>
-                    <option>Billing / accounts</option>
-                    <option>Partnership / recruiter plans</option>
-                    <option>Other</option>
-                  </select>
-                </Field>
-              </div>
-
-              <Field label="How can we help?" required>
-                <textarea
-                  required
-                  rows={5}
-                  className="w-full px-3.5 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-800 outline-none resize-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
-                  placeholder="Share a bit of context, links or examples so we can respond with something useful."
-                />
-              </Field>
-
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3">
-                <button
-                  disabled={loading}
-                  className="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-secondary hover:bg-[#232530] text-white text-sm font-semibold shadow-lg shadow-secondary/25 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <>
-                      <span className="inline-flex h-4 w-4 mr-2 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                      Sending…
-                    </>
-                  ) : (
-                    "Send message"
-                  )}
-                </button>
-                <p className="text-[11px] text-gray-500 max-w-xs">
-                  By submitting, you agree that we may use your details to
-                  contact you about this request. We don&apos;t add you to a
-                  marketing list without consent.
-                </p>
-              </div>
-            </form>
-          </div>
-
           {/* Info card */}
           <div className="space-y-5">
             <div className="bg-secondary text-white rounded-2xl p-6 relative overflow-hidden">
@@ -154,7 +69,7 @@ export default function ContactPage() {
                 <li>• Feedback loops to tune evaluations</li>
               </ul>
               <Link
-                href="/about"
+                href="/about-us"
                 className="inline-flex text-xs font-semibold text-primary hover:text-primary/80"
               >
                 Learn more about how Amanox works →
@@ -177,13 +92,13 @@ export default function ContactPage() {
                   Privacy Policy
                 </Link>
                 <Link
-                  href="/terms"
+                  href="/terms-policy"
                   className="px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 hover:border-primary/40 hover:text-primary transition-all"
                 >
                   Terms of Service
                 </Link>
                 <Link
-                  href="/cookies"
+                  href="/cookies-policy"
                   className="px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 hover:border-primary/40 hover:text-primary transition-all"
                 >
                   Cookie Policy
@@ -194,17 +109,5 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-function Field({ label, required, children }) {
-  return (
-    <label className="block text-xs text-gray-700 font-semibold">
-      <span className="ml-0.5">
-        {label}
-        {required && <span className="text-red-500"> *</span>}
-      </span>
-      <div className="mt-2">{children}</div>
-    </label>
   );
 }
