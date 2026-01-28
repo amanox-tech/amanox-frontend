@@ -18,8 +18,8 @@ export default function BuyCoinsModal({ onClose, onBuy }) {
         </div>
 
         <p className="text-gray-500 text-sm mb-4">
-          Boost your analysis power. Higher plans unlock more parallel AI
-          models.
+          Each Premium Analysis costs 10 coins. Our Pro AI engine ensures the
+          world&apos;s most accurate feedback.
         </p>
 
         <div className="grid grid-cols-2 gap-3 mb-6">

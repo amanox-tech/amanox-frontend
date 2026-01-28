@@ -11,11 +11,7 @@ import CoinHistoryModal from "./components/CoinHistoryModal";
 import PaymentHistoryModal from "./components/PaymentHistoryModal";
 import { usePayment } from "./hooks/usePayment";
 
-const EXPERT_MODELS = [
-  { id: "openai", name: "GPT-5 Mini", desc: "OpenAI" },
-  { id: "gemini", name: "Gemini 2.5 Flash", desc: "Google" },
-  { id: "grok", name: "Grok-3 Mini", desc: "xAI" },
-];
+const ANALYSIS_COST = 10;
 
 export default function CandidateDashboard() {
   const router = useRouter();
@@ -31,12 +27,6 @@ export default function CandidateDashboard() {
   const [isJobMatchMode, setIsJobMatchMode] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
 
-  const [selectedModels, setSelectedModels] = useState([
-    "openai",
-    "gemini",
-    "grok",
-  ]);
-
   const {
     handlePurchase,
     coinHistory,
@@ -45,146 +35,84 @@ export default function CandidateDashboard() {
     fetchPaymentHistory,
   } = usePayment({ fetchUser });
 
-  // Role protection
   useEffect(() => {
     if (!userLoading && user && user.role === "recruiter") {
       router.replace("/dashboard/recruiter");
     }
   }, [router, user, userLoading]);
 
-  // Local resume history
   useEffect(() => {
     const storedHistory = localStorage.getItem("resumeHistory");
-    if (!storedHistory) return;
-
-    try {
-      setHistory(JSON.parse(storedHistory));
-    } catch (err) {
-      console.error(err);
+    if (storedHistory) {
+      try {
+        setHistory(JSON.parse(storedHistory));
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, []);
 
-  // Fetch histories when modals open
   useEffect(() => {
-    if (isCoinHistoryOpen) {
-      fetchCoinHistory();
-    }
+    if (isCoinHistoryOpen) fetchCoinHistory();
   }, [isCoinHistoryOpen, fetchCoinHistory]);
 
   useEffect(() => {
-    if (isPaymentHistoryOpen) {
-      fetchPaymentHistory();
-    }
+    if (isPaymentHistoryOpen) fetchPaymentHistory();
   }, [isPaymentHistoryOpen, fetchPaymentHistory]);
-
-  const toggleModel = (id) => {
-    setSelectedModels((prev) =>
-      prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id],
-    );
-  };
 
   const onDrop = useCallback(
     async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (!file) return;
 
-      if (selectedModels.length === 0) {
-        toast.error("Please select at least one AI model.");
-        return;
-      }
-
       if (isJobMatchMode && jobDescription.trim().length < 50) {
         toast.error(
-          "Please enter a valid Job Description (at least 50 chars).",
+          "Please paste the job description (at least 50 characters).",
         );
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("File is too large. Max 5MB allowed.");
-        return;
-      }
-
-      if (user?.coins < selectedModels.length) {
-        toast.error("Not enough coins for selected models.");
+      if ((user?.coins ?? 0) < ANALYSIS_COST) {
+        toast.error(`You need ${ANALYSIS_COST} coins to start.`);
+        setIsBuyModalOpen(true);
         return;
       }
 
       setIsAnalyzing(true);
-
       try {
         const formData = new FormData();
         formData.append("resume", file);
-        formData.append("models", JSON.stringify(selectedModels));
-        if (isJobMatchMode) {
-          formData.append("jobDescription", jobDescription);
-        }
+        if (isJobMatchMode) formData.append("jobDescription", jobDescription);
 
-        const { data } = await api.post("/api/v1/resume/analyze", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const { data } = await api.post("/api/v1/resume/analyze", formData);
 
-        if (!data?.success) {
-          throw new Error(data?.message || "Analysis failed");
-        }
+        if (!data?.success) throw new Error(data?.message || "Audit failed");
 
-        toast.success(
-          isJobMatchMode
-            ? "Match Analysis Complete!"
-            : "Resume analyzed successfully!",
-        );
-
-        const result = data.data;
-
-        // Refresh user to update coins
+        toast.success("Resume checked successfully!");
         await fetchUser();
 
+        const result = data.data;
         const newEntry = {
           id: Date.now(),
-          score:
-            typeof result.score === "number"
-              ? result.score
-              : Math.round((result?.section_scores?.impact ?? 0) * 0.01 * 100),
-          type: isJobMatchMode ? "Job Match" : "General Scan",
+          score: result.score ?? 0,
+          type: isJobMatchMode ? "Job Match" : "General Audit",
           summary: result.summary_candidate || result.summary || "",
-          date: new Date().toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          }),
+          date: new Date().toLocaleDateString(),
           fullData: result,
         };
 
-        const existingHistory = JSON.parse(
-          localStorage.getItem("resumeHistory") || "[]",
-        );
-        const updatedHistory = [newEntry, ...existingHistory].slice(0, 5);
-
+        const updatedHistory = [newEntry, ...history].slice(0, 5);
         localStorage.setItem("resumeHistory", JSON.stringify(updatedHistory));
         localStorage.setItem("analysisResult", JSON.stringify(result));
 
-        setTimeout(() => {
-          setIsAnalyzing(false);
-          router.push("/analysis");
-        }, 250);
+        router.push("/analysis");
       } catch (error) {
-        console.error(error);
-        toast.error(
-          error?.response?.data?.message ||
-            error?.message ||
-            "Analysis failed. Please try again.",
-        );
+        toast.error(error?.response?.data?.message || "Something went wrong.");
+      } finally {
         setIsAnalyzing(false);
       }
     },
-    [
-      jobDescription,
-      isJobMatchMode,
-      router,
-      selectedModels,
-      fetchUser,
-      user?.coins,
-    ],
+    [jobDescription, isJobMatchMode, router, fetchUser, user?.coins, history],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -195,367 +123,226 @@ export default function CandidateDashboard() {
         [".docx"],
     },
     maxFiles: 1,
-    multiple: false,
-    disabled: isAnalyzing || (user?.coins ?? 0) < selectedModels.length,
+    disabled: isAnalyzing || (user?.coins ?? 0) < ANALYSIS_COST,
   });
 
-  const handleViewScan = (scanItem) => {
-    localStorage.setItem("analysisResult", JSON.stringify(scanItem.fullData));
-    router.push("/analysis");
-  };
-
   if (userLoading) return null;
-
-  const lastScan = history.length > 0 ? history[0] : null;
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pt-32 pb-12 px-6">
       <div className="max-w-[1200px] mx-auto">
         {/* HEADER */}
-        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-secondary">
-              Hello,{" "}
+            <h1 className="text-4xl font-black text-secondary tracking-tight">
+              Welcome,{" "}
               <span className="text-primary">
-                {user?.name ? user.name.split(" ")[0] : ""}
+                {user?.name?.split(" ")[0] || "User"}
               </span>
             </h1>
-            <p className="text-gray-500 mt-2">Ready to land your dream job?</p>
+            <p className="text-gray-500 mt-2 font-medium">
+              Ready to see how recruiters view your resume?
+            </p>
           </div>
           <div className="hidden md:block">
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-primary">
-              Candidate Account
+            <span className="px-4 py-2 rounded-2xl bg-primary/10 text-primary text-xs font-black uppercase tracking-widest">
+              Premium Audit Access
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* LEFT: Models + Upload */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            {/* MODEL SELECTOR */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-secondary text-sm uppercase tracking-wider">
-                  Select Expert Panel
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* LEFT COLUMN */}
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            {/* BRANDING CARD */}
+            <div className="bg-secondary rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden">
+              <div className="relative z-10">
+                <h3 className="text-2xl font-black mb-3 text-primary">
+                  Amanox Pro Intelligence
                 </h3>
-                <span className="text-xs text-gray-400">
-                  {selectedModels.length} selected
-                </span>
+                <p className="text-gray-400 text-sm leading-relaxed max-w-md">
+                  We use deep-reasoning AI to check your resume for 45+ critical
+                  points that hiring managers look for. Simple, fast, and
+                  accurate.
+                </p>
               </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {EXPERT_MODELS.map((model) => {
-                  const selected = selectedModels.includes(model.id);
-                  return (
-                    <button
-                      key={model.id}
-                      type="button"
-                      onClick={() => toggleModel(model.id)}
-                      disabled={isAnalyzing}
-                      className={`relative p-3 rounded-xl border text-left transition-all duration-200 ${
-                        selected
-                          ? "border-primary bg-primary/5 shadow-sm"
-                          : "border-gray-100 hover:border-gray-300 hover:bg-gray-50"
-                      } ${isAnalyzing ? "opacity-60 pointer-events-none" : ""}`}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span
-                          className={`text-xs font-bold ${
-                            selected ? "text-primary" : "text-gray-500"
-                          }`}
-                        >
-                          {model.desc}
-                        </span>
-                        {selected && (
-                          <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
-                            <svg
-                              className="w-2.5 h-2.5 text-white"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={4}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-sm font-bold text-secondary">
-                        {model.name}
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* COIN COST BAR */}
-              <div className="mt-4 p-3 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 font-medium">
-                    Total Cost
-                  </p>
-                  <p className="text-lg font-bold text-secondary">
-                    {selectedModels.length} Coin
-                    {selectedModels.length > 1 ? "s" : ""}
-                  </p>
-                </div>
-
-                <div
-                  className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    (user?.coins ?? 0) >= selectedModels.length
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-600"
-                  }`}
-                >
-                  {(user?.coins ?? 0) >= selectedModels.length
-                    ? "Sufficient Balance"
-                    : "Insufficient Coins"}
-                </div>
-              </div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2" />
             </div>
 
-            {/* UPLOAD CARD */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 relative overflow-hidden group transition-all duration-300 min-h-[300px] flex flex-col">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
-              <div className="relative z-10 flex-1 flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-secondary">
-                    {isJobMatchMode ? "Target Job Match" : "Resume Analysis"}
-                  </h2>
-
-                  {/* TOGGLE */}
-                  <div className="flex items-center bg-gray-100 p-1 rounded-full">
-                    <button
-                      type="button"
-                      onClick={() => setIsJobMatchMode(false)}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all ${
-                        !isJobMatchMode
-                          ? "bg-white shadow-sm text-secondary"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      General
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsJobMatchMode(true)}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all flex items-center gap-1 ${
-                        isJobMatchMode
-                          ? "bg-secondary shadow-sm text-white"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      Job Match{" "}
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-                    </button>
-                  </div>
+            {/* UPLOAD & MODE SECTION */}
+            <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100 flex flex-col gap-8">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-black text-secondary">
+                  {isJobMatchMode ? "Target Job Match" : "General Resume Audit"}
+                </h2>
+                <div className="bg-gray-100 p-1.5 rounded-2xl flex gap-1">
+                  <button
+                    onClick={() => setIsJobMatchMode(false)}
+                    className={`px-6 py-2 text-xs font-black rounded-xl transition-all ${!isJobMatchMode ? "bg-white text-secondary shadow-sm" : "text-gray-400"}`}
+                  >
+                    GENERAL
+                  </button>
+                  <button
+                    onClick={() => setIsJobMatchMode(true)}
+                    className={`px-6 py-2 text-xs font-black rounded-xl transition-all ${isJobMatchMode ? "bg-secondary text-white shadow-sm" : "text-gray-400"}`}
+                  >
+                    JOB MATCH
+                  </button>
                 </div>
+              </div>
 
-                {isJobMatchMode && (
-                  <div className="mb-4 animate-in slide-in-from-top-2 duration-300">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
-                      Paste Job Description
-                    </label>
-                    <textarea
-                      value={jobDescription}
-                      onChange={(e) => setJobDescription(e.target.value)}
-                      placeholder="Paste the full job description here..."
-                      className="w-full p-4 rounded-xl bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none text-sm text-secondary h-32 resize-none transition-all"
+              {isJobMatchMode && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">
+                    Paste Job Description
+                  </label>
+                  <textarea
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                    placeholder="Paste the job requirements here..."
+                    className="w-full p-5 rounded-2xl bg-gray-50 border border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none text-sm transition-all h-36 resize-none"
+                  />
+                </div>
+              )}
+
+              <div
+                {...getRootProps()}
+                className={`group border-4 border-dashed rounded-4xl p-12 flex flex-col items-center justify-center transition-all cursor-pointer ${isDragActive ? "border-primary bg-primary/5" : "border-gray-100 hover:border-primary/50 hover:bg-gray-50"} ${isAnalyzing ? "opacity-40 pointer-events-none" : ""}`}
+              >
+                <input {...getInputProps()} />
+                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                  <svg
+                    className="w-10 h-10 text-primary"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
-                  </div>
-                )}
-
-                <p className="text-gray-500 mb-4 max-w-md">
-                  {isJobMatchMode
-                    ? "See how well your resume fits this specific job."
-                    : "Get instant feedback, scoring, and improvement suggestions."}
-                </p>
-
-                <div
-                  {...getRootProps()}
-                  className={`flex-1 border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all cursor-pointer ${
-                    isDragActive
-                      ? "border-primary bg-primary/5 scale-[0.99]"
-                      : "border-gray-200 hover:border-primary/50 hover:bg-gray-50"
-                  } ${
-                    isAnalyzing || (user?.coins ?? 0) < selectedModels.length
-                      ? "pointer-events-none opacity-40"
-                      : ""
-                  }`}
-                >
-                  <input {...getInputProps()} />
-                  <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <svg
-                      className="w-6 h-6 text-gray-400 group-hover:text-primary"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-secondary font-semibold">
-                    Click to upload or drag PDF/DOCX
-                  </p>
+                  </svg>
                 </div>
+                <p className="text-secondary font-black text-lg">
+                  Click to Upload Resume
+                </p>
+                <p className="text-gray-400 text-sm mt-1">
+                  PDF or DOCX (Max 5MB)
+                </p>
+              </div>
 
-                {isAnalyzing && (
-                  <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-3xl">
-                    <div className="w-16 h-16 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-4" />
-                    <h3 className="text-xl font-bold text-secondary">
-                      {isJobMatchMode
-                        ? "Comparing Resume..."
-                        : "Analyzing Profile..."}
-                    </h3>
-                    <p className="text-gray-500 text-sm mt-2">
-                      Consulting with {selectedModels.length} AI Experts
+              <div className="p-5 rounded-3xl bg-gray-50 border border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary font-black">
+                    {ANALYSIS_COST}
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">
+                      Cost per Audit
+                    </p>
+                    <p className="text-sm font-black text-secondary">
+                      Premium Credits
                     </p>
                   </div>
-                )}
+                </div>
+                <div
+                  className={`px-4 py-2 rounded-xl text-xs font-black ${user?.coins >= ANALYSIS_COST ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                >
+                  {user?.coins >= ANALYSIS_COST
+                    ? "Balance Sufficient"
+                    : "Needs Recharge"}
+                </div>
               </div>
             </div>
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="flex flex-col gap-6">
-            {/* COIN WALLET */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-400 font-medium mb-1">
-                  Your Coins
-                </p>
-                <h2 className="text-3xl font-bold text-secondary">
+          <div className="flex flex-col gap-8">
+            {/* WALLET */}
+            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                Your Wallet
+              </p>
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-5xl font-black text-secondary">
                   {user?.coins ?? 0}
                 </h2>
-              </div>
-
-              <div className="flex flex-col gap-3 items-end">
                 <button
-                  type="button"
                   onClick={() => setIsBuyModalOpen(true)}
-                  className="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm hover:bg-primary/90 active:scale-[0.98] transition-all"
+                  className="p-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 hover:scale-105 transition-transform"
                 >
-                  Buy Coins
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
                 </button>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsCoinHistoryOpen(true)}
-                    className="flex items-center gap-1.5 text-secondary px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 hover:bg-gray-200 transition-all"
-                  >
-                    <svg
-                      className="w-4 h-4 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2.2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 6v6l4 2"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M21 12A9 9 0 118 3"
-                      />
-                    </svg>
-                    Coin History
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsPaymentHistoryOpen(true)}
-                    className="flex items-center gap-1.5 text-secondary px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 hover:bg-gray-200 transition-all"
-                  >
-                    <svg
-                      className="w-4 h-4 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2.2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 3h18v18H3z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 10h18"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M7 15h1m4 0h1m4 0h1"
-                      />
-                    </svg>
-                    Payments
-                  </button>
-                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setIsCoinHistoryOpen(true)}
+                  className="py-3 bg-gray-50 rounded-xl text-[10px] font-black text-secondary uppercase hover:bg-gray-100"
+                >
+                  History
+                </button>
+                <button
+                  onClick={() => setIsPaymentHistoryOpen(true)}
+                  className="py-3 bg-gray-50 rounded-xl text-[10px] font-black text-secondary uppercase hover:bg-gray-100"
+                >
+                  Payments
+                </button>
               </div>
             </div>
 
-            {/* LAST SCORE */}
-            <div className="bg-secondary text-white rounded-3xl p-6 shadow-lg relative overflow-hidden">
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl" />
-              <p className="text-gray-300 text-sm font-medium mb-1">
-                Last Resume Score
+            {/* PREVIOUS SCORE */}
+            <div className="bg-primary rounded-[2.5rem] p-8 text-white shadow-xl shadow-primary/20">
+              <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-2">
+                Last Audit Score
               </p>
-              <div className="flex items-end gap-2">
-                <span className="text-5xl font-bold text-primary">
-                  {lastScan ? lastScan.score : "--"}
+              <div className="flex items-baseline gap-1">
+                <span className="text-6xl font-black">
+                  {history[0]?.score || "--"}
                 </span>
-                <span className="text-gray-400 mb-1">/ 100</span>
+                <span className="text-xl font-bold opacity-40">/100</span>
               </div>
             </div>
 
-            {/* RECENT SCANS */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex-1 flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-secondary">Recent Scans</h3>
-              </div>
-              <div className="flex-1 overflow-y-auto max-h-[300px] space-y-3 custom-scrollbar">
+            {/* RECENT ACTIVITY */}
+            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 flex-1 flex flex-col">
+              <h3 className="text-xs font-black text-secondary uppercase tracking-widest mb-6">
+                Recent Activity
+              </h3>
+              <div className="space-y-4">
                 {history.length === 0 ? (
-                  <p className="text-sm text-gray-400 text-center mt-10">
-                    No scans yet
+                  <p className="text-xs text-gray-400 italic">
+                    No audits performed yet.
                   </p>
                 ) : (
                   history.map((scan) => (
                     <button
                       key={scan.id}
-                      type="button"
                       onClick={() => handleViewScan(scan)}
-                      className="flex items-center justify-between w-full p-3 rounded-xl bg-gray-50 hover:bg-primary/5 cursor-pointer transition-all text-left"
+                      className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-primary/5 transition-all group"
                     >
-                      <div className="overflow-hidden">
-                        <p className="text-sm font-bold text-secondary truncate w-32">
-                          {scan.type || "Analysis"}
+                      <div className="text-left">
+                        <p className="text-xs font-black text-secondary uppercase tracking-tight">
+                          {scan.type}
                         </p>
-                        <p className="text-xs text-gray-400">{scan.date}</p>
+                        <p className="text-[10px] text-gray-400">{scan.date}</p>
                       </div>
-                      <span
-                        className={`text-sm font-bold ${
-                          scan.score >= 70
-                            ? "text-green-600"
-                            : "text-yellow-600"
-                        }`}
-                      >
-                        {scan.score}
-                      </span>
+                      <div className="text-sm font-black text-primary group-hover:scale-110 transition-transform">
+                        {scan.score}%
+                      </div>
                     </button>
                   ))
                 )}
@@ -565,28 +352,35 @@ export default function CandidateDashboard() {
         </div>
       </div>
 
-      {/* MODALS */}
+      {/* MODALS (Simplified logic) */}
       {isBuyModalOpen && (
         <BuyCoinsModal
           onClose={() => setIsBuyModalOpen(false)}
-          onBuy={(coins) =>
-            handlePurchase(coins, user, () => setIsBuyModalOpen(false))
-          }
+          onBuy={(c) => handlePurchase(c, user, () => setIsBuyModalOpen(false))}
         />
       )}
-
       {isCoinHistoryOpen && (
         <CoinHistoryModal
           history={coinHistory}
           onClose={() => setIsCoinHistoryOpen(false)}
         />
       )}
-
       {isPaymentHistoryOpen && (
         <PaymentHistoryModal
           history={paymentHistory}
           onClose={() => setIsPaymentHistoryOpen(false)}
         />
+      )}
+
+      {/* ANALYSIS OVERLAY */}
+      {isAnalyzing && (
+        <div className="fixed inset-0 bg-secondary/95 backdrop-blur-md z-100 flex flex-col items-center justify-center text-white">
+          <div className="w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-6" />
+          <h3 className="text-3xl font-black mb-2">Auditing Your Resume</h3>
+          <p className="text-gray-400 font-medium">
+            This usually takes about 30 seconds...
+          </p>
+        </div>
       )}
     </div>
   );

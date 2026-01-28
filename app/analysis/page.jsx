@@ -9,9 +9,6 @@ export default function AnalysisPage() {
   const router = useRouter();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeView, setActiveView] = useState("report");
-  // activeExpert can be: "consensus" | number (index) | modelName (string)
-  const [activeExpert, setActiveExpert] = useState("consensus");
 
   useEffect(() => {
     const loadData = () => {
@@ -21,9 +18,7 @@ export default function AnalysisPage() {
           router.replace("/dashboard");
           return;
         }
-        const parsed = JSON.parse(storedData);
-        setData(parsed);
-        // default activeExpert stay consensus; keep stable if model_reviews exist
+        setData(JSON.parse(storedData));
       } catch (error) {
         console.error("Data error", error);
         router.replace("/dashboard");
@@ -31,8 +26,7 @@ export default function AnalysisPage() {
         setLoading(false);
       }
     };
-    const timer = setTimeout(loadData, 300);
-    return () => clearTimeout(timer);
+    loadData();
   }, [router]);
 
   const copyToClipboard = (text) => {
@@ -40,41 +34,12 @@ export default function AnalysisPage() {
     toast.success("Copied to clipboard!");
   };
 
-  const getDisplayData = () => {
-    if (!data) return null;
-    if (activeExpert === "consensus") return data;
-
-    // If activeExpert is numeric index
-    if (typeof activeExpert === "number") {
-      const review = data.model_reviews?.[activeExpert];
-      return review && review.success ? review.full_data : null;
-    }
-
-    // If activeExpert is a string (model name)
-    const byName = data.model_reviews?.find?.((r) => r.model === activeExpert);
-    if (byName) return byName.success ? byName.full_data : null;
-
-    return null;
-  };
-
-  const displayData = getDisplayData();
-  const isJobMatch = data?.mode === "job_match";
-
-  // Verdict Logic
-  const getVerdict = (score) => {
-    if (score >= 90) return { text: "World Class", color: "text-primary" };
-    if (score >= 80) return { text: "Excellent", color: "text-green-600" };
-    if (score >= 70) return { text: "Good", color: "text-blue-600" };
-    if (score >= 50) return { text: "Needs Work", color: "text-yellow-600" };
-    return { text: "Critical", color: "text-red-500" };
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] pt-32 flex flex-col items-center justify-center">
-        <div className="w-16 h-16 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-4"></div>
-        <p className="text-secondary font-bold animate-pulse">
-          Analyzing Profile...
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+        <div className="w-16 h-16 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-6" />
+        <p className="text-secondary font-black tracking-tight animate-pulse">
+          Generating Premium Report...
         </p>
       </div>
     );
@@ -82,573 +47,350 @@ export default function AnalysisPage() {
 
   if (!data) return null;
 
-  // If the selected expert has no data, show consensus score for verdict fallback
-  const verdict = getVerdict(displayData?.score ?? data.score ?? 0);
+  const isJobMatch = data?.mode === "job_match";
+  const score = data?.score ?? 0;
+
+  const getVerdict = (s) => {
+    if (s >= 90)
+      return {
+        text: "World Class",
+        color: "text-primary",
+        bg: "bg-primary/10",
+      };
+    if (s >= 80)
+      return { text: "Excellent", color: "text-green-600", bg: "bg-green-50" };
+    if (s >= 70)
+      return { text: "Competitive", color: "text-blue-600", bg: "bg-blue-50" };
+    return { text: "Needs Work", color: "text-yellow-600", bg: "bg-yellow-50" };
+  };
+
+  const verdict = getVerdict(score);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pt-32 pb-20 px-6 font-sans">
+    <div className="min-h-screen bg-[#FAFAFA] pt-32 pb-24 px-6 font-sans selection:bg-primary/20">
       <div className="max-w-[1100px] mx-auto">
         {/* --- HEADER --- */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-          <div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+          <div className="space-y-4">
             <Link
               href="/dashboard"
-              className="text-sm font-medium text-gray-400 hover:text-primary mb-3 inline-flex items-center gap-1 transition-colors group"
+              className="text-[10px] font-black text-gray-400 hover:text-primary transition-all tracking-[0.2em] flex items-center gap-2"
             >
-              <svg
-                className="w-4 h-4 group-hover:-translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              Back to Dashboard
+              ← BACK TO DASHBOARD
             </Link>
-            <div className="flex items-center gap-3">
-              <h1 className="text-4xl font-bold text-secondary tracking-tight">
-                {isJobMatch ? "Job Fit Analysis" : "Resume Report"}
-              </h1>
-              {isJobMatch && (
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold uppercase rounded-full border border-purple-200">
-                  Targeted Match
-                </span>
-              )}
-            </div>
-            <p className="text-gray-500 mt-1">
-              AI-driven insights to optimize your professional profile.
+            <h1 className="text-6xl font-black text-secondary tracking-tighter leading-none">
+              {isJobMatch ? "Job Fit Audit" : "Premium Analysis"}
+            </h1>
+            <p className="text-gray-500 text-lg font-medium">
+              A professional audit by Amanox Pro Intelligence.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* VIEW TOGGLE (Only if Job Match) */}
-            {isJobMatch && (
-              <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-200">
-                <button
-                  onClick={() => setActiveView("report")}
-                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                    activeView === "report"
-                      ? "bg-secondary text-white"
-                      : "text-gray-500 hover:bg-gray-50"
-                  }`}
-                >
-                  Analysis
-                </button>
-                <button
-                  onClick={() => setActiveView("outreach")}
-                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                    activeView === "outreach"
-                      ? "bg-primary text-white"
-                      : "text-gray-500 hover:bg-gray-50"
-                  }`}
-                >
-                  Messages
-                </button>
-              </div>
-            )}
-            <button
-              onClick={() => window.print()}
-              className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-500"
+          <button
+            onClick={() => window.print()}
+            className="px-8 py-4 bg-secondary text-white rounded-2xl text-xs font-black hover:bg-black transition-all shadow-xl shadow-secondary/20 flex items-center gap-3 active:scale-95"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
-              </svg>
-            </button>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            EXPORT AS PDF
+          </button>
         </div>
 
-        {/* ======================= VIEW: REPORT ======================= */}
-        {activeView === "report" && (
-          <div className="animate-in fade-in zoom-in-95 duration-300">
-            {/* MODEL TABS */}
-            <div className="flex flex-wrap gap-2 mb-8 bg-white p-2 rounded-2xl shadow-sm border border-gray-100 w-full md:w-fit">
-              <button
-                onClick={() => setActiveExpert("consensus")}
-                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                  activeExpert === "consensus"
-                    ? "bg-secondary text-white shadow-md"
-                    : "text-gray-500 hover:bg-gray-50"
-                }`}
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+          {/* SECTION 1: SCORE & SUMMARY */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* RADIAL SCORE */}
+            <div className="bg-white p-12 rounded-[48px] shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-2 bg-primary/20" />
+              <div className="relative w-48 h-48 flex items-center justify-center mb-6">
+                <svg className="w-full h-full transform -rotate-90">
+                  <circle
+                    cx="96"
+                    cy="96"
+                    r="86"
+                    stroke="#F3F4F6"
+                    strokeWidth="14"
+                    fill="none"
+                  />
+                  <circle
+                    cx="96"
+                    cy="96"
+                    r="86"
+                    stroke="#18cb96"
+                    strokeWidth="14"
+                    fill="none"
+                    strokeDasharray={540}
+                    strokeDashoffset={540 - (540 * score) / 100}
+                    strokeLinecap="round"
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+                <span className="absolute text-6xl font-black text-secondary tracking-tighter">
+                  {score}
+                </span>
+              </div>
+              <div
+                className={`px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${verdict.bg} ${verdict.color}`}
               >
-                Final Result
-              </button>
-
-              {data.model_reviews?.map((review, index) => {
-                const good =
-                  review.success &&
-                  typeof review.score === "number" &&
-                  review.score >= 75;
-                const warn =
-                  review.success &&
-                  typeof review.score === "number" &&
-                  review.score >= 50 &&
-                  review.score < 75;
-                const bad =
-                  review.success &&
-                  typeof review.score === "number" &&
-                  review.score < 50;
-                return (
-                  <button
-                    key={index}
-                    onClick={() => setActiveExpert(index)}
-                    title={
-                      review.success
-                        ? `Score: ${review.score}`
-                        : `Model failed: ${review.error || "no response"}`
-                    }
-                    className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
-                      activeExpert === index
-                        ? "bg-primary/10 text-primary border border-primary/20"
-                        : "text-gray-500 hover:bg-gray-50"
-                    }`}
-                  >
-                    <span className="truncate max-w-[140px]">
-                      {review.model}
-                    </span>
-                    <span className="ml-1 inline-flex items-center text-xs font-semibold">
-                      {review.success ? (
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[11px] ${
-                            good
-                              ? "bg-green-50 text-green-700"
-                              : warn
-                                ? "bg-yellow-50 text-yellow-700"
-                                : bad
-                                  ? "bg-red-50 text-red-700"
-                                  : "bg-gray-50 text-gray-600"
-                          }`}
-                        >
-                          {review.score ?? "—"}
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-full text-[11px] bg-gray-50 text-gray-400">
-                          fail
-                        </span>
-                      )}
-                    </span>
-                  </button>
-                );
-              })}
+                {verdict.text}
+              </div>
             </div>
 
-            {/* HERO GRID */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-              {/* SCORE CARD */}
-              <div className="bg-white p-8 rounded-4xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                <div className="relative w-40 h-40 flex items-center justify-center mb-6">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="70"
-                      stroke="#f3f4f6"
-                      strokeWidth="12"
-                      fill="none"
-                    />
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="70"
-                      stroke="#18cb96"
-                      strokeWidth="12"
-                      fill="none"
-                      strokeDasharray={440}
-                      strokeDashoffset={
-                        440 -
-                        (440 * (displayData?.score ?? data?.score ?? 0)) / 100
-                      }
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="absolute text-5xl font-extrabold text-secondary">
-                    {displayData?.score ?? data?.score ?? 0}
-                  </span>
-                </div>
-                <p className="text-gray-400 text-sm font-bold uppercase tracking-wider">
-                  {isJobMatch ? "Match Score" : "Resume Score"}
-                </p>
-                <div
-                  className={`mt-4 px-4 py-1.5 rounded-full text-xs font-bold bg-gray-50 ${verdict.color}`}
+            {/* SUMMARY CARD */}
+            <div className="lg:col-span-2 bg-white p-12 rounded-[48px] shadow-sm border border-gray-100 flex flex-col justify-between relative">
+              <div className="absolute top-8 right-8 text-primary/10">
+                <svg
+                  className="w-20 h-20"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  {verdict.text}
-                </div>
+                  <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017V14C19.017 11.2386 16.7784 9 14.017 9V7C17.883 7 21.017 10.134 21.017 14V21H14.017ZM3.01697 21L3.01697 18C3.01697 16.8954 3.91241 16 5.01697 16H8.01697V14C8.01697 11.2386 5.77839 9 3.01697 9V7C6.88297 7 10.017 10.134 10.017 14V21H3.01697Z" />
+                </svg>
               </div>
-
-              {/* SUMMARY */}
-              <div className="lg:col-span-2 bg-white p-10 rounded-4xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-secondary mb-4 flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                      💡
-                    </span>
-                    Your Summary
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed text-lg">
-                    {displayData?.summary_candidate ??
-                      displayData?.summary ??
-                      data?.summary_candidate ??
-                      data?.summary ??
-                      "No summary available."}
-                  </p>
-                </div>
-
-                {/* SECTION SCORES */}
-                <div className="mt-8 grid grid-cols-3 gap-4 pt-8 border-t border-gray-100">
-                  {Object.entries(
-                    displayData?.section_scores ??
-                      data?.section_scores ?? {
-                        impact: 0,
-                        skills: 0,
-                        formatting: 0,
-                      },
-                  ).map(([key, val]) => (
-                    <div key={key} className="text-center">
-                      <div className="text-xs font-bold text-gray-400 uppercase mb-2">
-                        {key}
-                      </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-1">
-                        <div
-                          className="h-full bg-secondary rounded-full"
-                          style={{ width: `${val}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-bold text-secondary">
-                        {val}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* KEYWORDS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-              <div className="bg-white p-8 rounded-3xl border border-gray-100">
-                <h3 className="text-lg font-bold text-green-600 mb-4 flex items-center gap-2">
-                  <span className="bg-green-100 p-1 rounded-full">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={3}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </span>
-                  What You Have
+              <div className="relative z-10">
+                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6">
+                  Executive Summary
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {(
-                    displayData?.keywords?.present ??
-                    data?.keywords?.present ??
-                    []
-                  ).length > 0 ? (
-                    (
-                      displayData?.keywords?.present ??
-                      data?.keywords?.present ??
-                      []
-                    ).map((kw, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1 bg-green-50 text-green-700 text-sm font-medium rounded-lg border border-green-100"
-                      >
-                        {kw}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-gray-400 text-sm">
-                      None detected.
-                    </span>
-                  )}
-                </div>
+                <p className="text-secondary text-2xl leading-snug font-bold italic opacity-90">
+                  &quot;{data.summary_candidate || data.summary}&quot;
+                </p>
               </div>
-
-              <div className="bg-white p-8 rounded-3xl border border-gray-100">
-                <h3 className="text-lg font-bold text-red-500 mb-4 flex items-center gap-2">
-                  <span className="bg-red-100 p-1 rounded-full">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={3}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </span>
-                  Missing Keywords
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {(
-                    displayData?.keywords?.missing ??
-                    data?.keywords?.missing ??
-                    []
-                  ).length > 0 ? (
-                    (
-                      displayData?.keywords?.missing ??
-                      data?.keywords?.missing ??
-                      []
-                    ).map((kw, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1 bg-gray-100 text-gray-500 text-sm font-medium rounded-lg border border-dashed border-gray-300"
-                      >
-                        {kw}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-green-500 font-bold text-sm">
-                      Perfect match! No missing keywords.
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* REWRITES */}
-            {(displayData?.rewrites ?? data?.rewrites)?.length > 0 && (
-              <div className="mb-12">
-                <h2 className="text-2xl font-bold text-secondary mb-6">
-                  Suggested Rewrites
-                </h2>
-                <div className="space-y-6">
-                  {(displayData?.rewrites ?? data?.rewrites ?? []).map(
-                    (item, index) => (
-                      <div
-                        key={index}
-                        className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
-                      >
-                        <div className="bg-gray-50 px-6 py-3 border-b border-gray-100">
-                          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            Reason: {item.reason ?? "Improvement"}
-                          </p>
-                        </div>
-                        <div className="grid md:grid-cols-2">
-                          <div className="p-6 border-b md:border-b-0 md:border-r border-gray-100 bg-red-50/10">
-                            <p className="text-xs font-bold text-red-400 mb-2 uppercase">
-                              Your Version
-                            </p>
-                            <p className="text-gray-600 line-through decoration-red-300 decoration-2">
-                              {item.original ?? "—"}
-                            </p>
-                          </div>
-                          <div className="p-6 bg-green-50/20 relative group">
-                            <p className="text-xs font-bold text-green-600 mb-2 uppercase">
-                              Better Version
-                            </p>
-                            <p className="text-gray-800 font-medium">
-                              {item.improved ?? "—"}
-                            </p>
-                            <button
-                              onClick={() =>
-                                copyToClipboard(item.improved ?? "")
-                              }
-                              className="absolute top-4 right-4 p-2 bg-white rounded-lg shadow-sm border border-gray-200 text-gray-400 hover:text-green-600"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ),
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* STRENGTHS & WEAKNESSES */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              <div className="bg-[#f0fdf4] p-8 rounded-4xl border border-green-100">
-                <h3 className="font-bold text-green-900 mb-6 text-xl">
-                  Your Top Strengths
-                </h3>
-                <ul className="space-y-4">
-                  {(displayData?.strengths ?? data?.strengths ?? []).map(
-                    (str, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="text-green-500 mt-1">●</span>
-                        <span className="text-green-800 font-medium leading-relaxed">
-                          {str}
-                        </span>
-                      </li>
-                    ),
-                  )}
-                </ul>
-              </div>
-
-              <div className="bg-[#fef2f2] p-8 rounded-4xl border border-red-100">
-                <h3 className="font-bold text-red-900 mb-6 text-xl">
-                  Things to Fix
-                </h3>
-                <ul className="space-y-4">
-                  {(displayData?.weaknesses ?? data?.weaknesses ?? []).map(
-                    (wk, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="text-red-500 mt-1">●</span>
-                        <span className="text-red-900 font-medium leading-relaxed">
-                          {wk}
-                        </span>
-                      </li>
-                    ),
-                  )}
-                </ul>
-              </div>
-            </div>
-
-            {/* ADDITIONAL SECTIONS: dev_maturity, interview_risks, projects_to_add */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <div className="bg-white p-6 rounded-2xl border border-gray-100">
-                <h4 className="font-bold mb-2">Dev Maturity</h4>
-                <div className="text-sm text-gray-600">
-                  <div>
-                    Seniority:{" "}
-                    {displayData?.dev_maturity?.seniority_score ??
-                      data?.dev_maturity?.seniority_score ??
-                      "—"}
+              <div className="grid grid-cols-3 gap-8 mt-10 pt-10 border-t border-gray-50">
+                {Object.entries(data.section_scores || {}).map(([key, val]) => (
+                  <div key={key}>
+                    <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest mb-2">
+                      {key}
+                    </p>
+                    <p className="text-2xl font-black text-secondary">{val}%</p>
                   </div>
-                  <div>
-                    Communication:{" "}
-                    {displayData?.dev_maturity?.communication_score ??
-                      data?.dev_maturity?.communication_score ??
-                      "—"}
-                  </div>
-                  <div>
-                    Business:{" "}
-                    {displayData?.dev_maturity?.business_understanding_score ??
-                      data?.dev_maturity?.business_understanding_score ??
-                      "—"}
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-2xl border border-gray-100">
-                <h4 className="font-bold mb-2">Interview Risks</h4>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  {(displayData?.interview_risks ?? data?.interview_risks ?? [])
-                    .length > 0 ? (
-                    (
-                      displayData?.interview_risks ??
-                      data?.interview_risks ??
-                      []
-                    ).map((r, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <span className="text-red-500">●</span>
-                        <div>
-                          <div className="font-medium text-sm">{r.area}</div>
-                          <div className="text-xs text-gray-500">
-                            {r.why} • Fix: {r.fix}
-                          </div>
-                        </div>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-sm text-gray-400">
-                      No major interview risks detected.
-                    </li>
-                  )}
-                </ul>
-              </div>
-
-              <div className="bg-white p-6 rounded-2xl border border-gray-100">
-                <h4 className="font-bold mb-2">Projects to Add</h4>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  {(displayData?.projects_to_add ?? data?.projects_to_add ?? [])
-                    .length > 0 ? (
-                    (
-                      displayData?.projects_to_add ??
-                      data?.projects_to_add ??
-                      []
-                    ).map((p, i) => (
-                      <li key={i}>
-                        <div className="font-medium">{p.title}</div>
-                        <div className="text-xs text-gray-500">
-                          {p.reason} • Value: {p.value}
-                        </div>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-sm text-gray-400">
-                      No project suggestions.
-                    </li>
-                  )}
-                </ul>
+                ))}
               </div>
             </div>
           </div>
-        )}
 
-        {/* ======================= VIEW: OUTREACH (Candidate Only) ======================= */}
-        {activeView === "outreach" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in slide-in-from-right-8 duration-500">
-            {(displayData?.outreach ?? data?.outreach ?? {}) &&
-            Object.entries(displayData?.outreach ?? data?.outreach ?? {})
-              .length > 0 ? (
-              Object.entries(displayData?.outreach ?? data?.outreach ?? {}).map(
-                ([key, text]) => (
-                  <div
-                    key={key}
-                    className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative"
+          {/* SECTION 2: KEYWORDS & GAPS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm hover:border-primary/20 transition-all">
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500" />{" "}
+                High-Value Keywords Found
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {(data.keywords?.present || []).map((kw, i) => (
+                  <span
+                    key={i}
+                    className="px-4 py-2 bg-primary/5 text-primary text-xs font-black rounded-xl border border-primary/10"
                   >
-                    <h3 className="font-bold text-gray-900 capitalize mb-4">
-                      {key.replace("_", " ")}
-                    </h3>
-                    <div className="p-4 bg-gray-50 rounded-xl text-sm text-gray-700 leading-relaxed font-mono whitespace-pre-wrap border border-gray-100 h-48 overflow-y-auto">
-                      {text}
+                    {kw}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm hover:border-red-200 transition-all">
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />{" "}
+                Critical Gaps (Missing)
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {(data.keywords?.missing || []).map((kw, i) => (
+                  <span
+                    key={i}
+                    className="px-4 py-2 bg-red-50 text-red-600 text-xs font-black rounded-xl border border-red-100"
+                  >
+                    {kw}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 3: REWRITES */}
+          <div className="bg-white p-12 rounded-[48px] border border-gray-100 shadow-sm relative overflow-hidden">
+            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-10">
+              Amanox Pro Bullet Optimizations
+            </h3>
+            <div className="space-y-8">
+              {(data.rewrites || []).map((item, idx) => (
+                <div
+                  key={idx}
+                  className="group relative bg-gray-50/50 rounded-4xl p-8 border border-gray-100 hover:border-primary/20 hover:bg-white hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="grid md:grid-cols-2 gap-12">
+                    <div className="opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all">
+                      <p className="text-[10px] font-black text-gray-400 uppercase mb-3">
+                        Your Entry
+                      </p>
+                      <p className="text-sm font-medium leading-relaxed italic line-through decoration-red-400">
+                        {item.original}
+                      </p>
                     </div>
-                    <div className="mt-4 flex gap-2">
-                      <button
-                        onClick={() => copyToClipboard(text)}
-                        className="flex-1 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-primary transition-colors"
-                      >
-                        Copy Text
-                      </button>
+                    <div>
+                      <p className="text-[10px] font-black text-primary uppercase mb-3">
+                        Optimized Version
+                      </p>
+                      <p className="text-base text-secondary font-black leading-relaxed">
+                        {item.improved}
+                      </p>
                     </div>
                   </div>
-                ),
-              )
-            ) : (
-              <div className="col-span-full text-center text-gray-400">
-                No outreach templates generated.
-              </div>
-            )}
+                  <button
+                    onClick={() => copyToClipboard(item.improved)}
+                    className="absolute top-6 right-6 p-3 opacity-0 group-hover:opacity-100 transition-opacity bg-white shadow-lg rounded-2xl text-primary hover:scale-110 active:scale-90"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2.5"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
-        )}
+
+          {/* SECTION 4: STRENGTHS & WEAKNESSES */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-green-50/20 p-12 rounded-[48px] border border-green-100">
+              <h3 className="font-black text-green-900 text-2xl mb-8 flex items-center gap-3">
+                <span className="w-10 h-10 bg-green-500 rounded-2xl flex items-center justify-center text-white text-sm">
+                  ✦
+                </span>
+                Key Strengths
+              </h3>
+              <ul className="space-y-5">
+                {(data.strengths || []).map((s, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 text-green-800 font-bold leading-relaxed"
+                  >
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />{" "}
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-red-50/20 p-12 rounded-[48px] border border-red-100">
+              <h3 className="font-black text-red-900 text-2xl mb-8 flex items-center gap-3">
+                <span className="w-10 h-10 bg-red-500 rounded-2xl flex items-center justify-center text-white text-lg font-black">
+                  !
+                </span>
+                Fix Recommendations
+              </h3>
+              <ul className="space-y-5">
+                {(data.weaknesses || []).map((w, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 text-red-800 font-bold leading-relaxed"
+                  >
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />{" "}
+                    {w}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* SECTION 5: MATURITY & RISK */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm">
+              <h4 className="font-black text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-8">
+                Dev Maturity Matrix
+              </h4>
+              <div className="space-y-6">
+                {Object.entries(data.dev_maturity || {}).map(([k, v]) => (
+                  <div key={k}>
+                    <div className="flex justify-between text-[10px] font-black mb-2 uppercase text-secondary/60">
+                      <span>{k.replace("_score", "")}</span>
+                      <span>{v}%</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary shadow-[0_0_10px_rgba(24,203,150,0.4)]"
+                        style={{ width: `${v}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white p-10 rounded-[40px] border border-gray-100 col-span-1 md:col-span-2 shadow-sm">
+              <h4 className="font-black text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-8">
+                Interview Risk Mitigation
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {(data.interview_risks || []).map((risk, i) => (
+                  <div
+                    key={i}
+                    className="p-6 bg-red-50/30 rounded-3xl border border-red-100 group hover:bg-red-50 transition-colors"
+                  >
+                    <p className="text-sm font-black text-secondary mb-2">
+                      {risk.area}
+                    </p>
+                    <p className="text-xs text-red-700 leading-relaxed font-bold">
+                      Fix Strategy:{" "}
+                      <span className="font-medium text-red-600">
+                        {risk.fix}
+                      </span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 6: PROJECTS (DARK MODE ACCENT) */}
+          <div className="bg-secondary rounded-[56px] p-16 text-white relative overflow-hidden shadow-2xl">
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 text-primary rounded-full text-[10px] font-black uppercase tracking-widest mb-8">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
+                Growth Roadmap
+              </div>
+              <h3 className="text-5xl font-black mb-12 tracking-tighter">
+                Strategic Projects to Add
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {(data.projects_to_add || []).map((p, i) => (
+                  <div
+                    key={i}
+                    className="p-10 bg-white/5 rounded-[40px] border border-white/10 hover:bg-white/10 transition-all group backdrop-blur-sm"
+                  >
+                    <p className="text-primary font-black text-2xl mb-4 group-hover:translate-x-1 transition-transform">
+                      {p.title}
+                    </p>
+                    <p className="text-base text-gray-400 leading-relaxed mb-8 font-medium italic">
+                      &quot;{p.reason}&quot;
+                    </p>
+                    <div className="inline-flex items-center px-5 py-2 rounded-xl bg-white/5 text-white text-[10px] font-black uppercase tracking-widest border border-white/5">
+                      Market Value: {p.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
+          </div>
+        </div>
       </div>
     </div>
   );

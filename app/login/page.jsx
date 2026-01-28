@@ -41,11 +41,11 @@ const LoginPage = () => {
         <div className="w-full max-w-[440px]">
           {/* Header */}
           <div className="mb-10 text-center lg:text-left">
-            <h1 className="text-4xl font-bold tracking-tight text-secondary mb-3">
+            <h1 className="text-4xl font-black tracking-tighter text-secondary mb-3">
               Welcome back
             </h1>
-            <p className="text-gray-500 text-lg">
-              Log in to access your expert AI panel.
+            <p className="text-gray-500 text-lg font-medium">
+              Log in to access your Premium AI Audit.
             </p>
           </div>
 
@@ -56,25 +56,24 @@ const LoginPage = () => {
 
           {/* Divider */}
           <div className="relative flex items-center justify-center mb-8">
-            <div className="border-t border-gray-200 w-full"></div>
-            <span className="bg-white px-4 text-sm text-gray-400 uppercase tracking-wider font-medium">
+            <div className="border-t border-gray-100 w-full"></div>
+            <span className="bg-white px-4 text-xs text-gray-400 uppercase tracking-[0.2em] font-black">
               or
             </span>
-            <div className="border-t border-gray-200 w-full"></div>
+            <div className="border-t border-gray-100 w-full"></div>
           </div>
 
           {/* Form */}
           <form onSubmit={submitHandler} className="space-y-6">
             {/* Email Field */}
             <div className="group space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">
+              <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  {/* Icon turns Turquoise on focus */}
                   <svg
-                    className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors duration-300"
+                    className="h-5 w-5 text-gray-300 group-focus-within:text-primary transition-colors duration-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -83,14 +82,14 @@ const LoginPage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                       d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
                     />
                   </svg>
                 </div>
                 <input
                   type="email"
-                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
+                  className="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all duration-300 font-bold text-secondary placeholder-gray-300"
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -102,12 +101,12 @@ const LoginPage = () => {
             {/* Password Field */}
             <div className="group space-y-2">
               <div className="flex justify-between items-center ml-1">
-                <label className="text-sm font-semibold text-gray-700">
+                <label className="text-xs font-black uppercase tracking-widest text-gray-400">
                   Password
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
+                  className="text-xs font-bold text-primary hover:opacity-80 transition-opacity"
                 >
                   Forgot password?
                 </Link>
@@ -115,7 +114,7 @@ const LoginPage = () => {
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors duration-300"
+                    className="h-5 w-5 text-gray-300 group-focus-within:text-primary transition-colors duration-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -124,14 +123,14 @@ const LoginPage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
                 </div>
                 <input
                   type="password"
-                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
+                  className="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all duration-300 font-bold text-secondary placeholder-gray-300"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -143,7 +142,7 @@ const LoginPage = () => {
             {/* Submit Button */}
             <button
               disabled={btnLoading}
-              className="w-full bg-secondary hover:bg-[#232530] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+              className="w-full bg-secondary hover:bg-black text-white font-black py-4 rounded-2xl shadow-xl shadow-secondary/20 hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-500 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
             >
               {btnLoading ? (
                 <>
@@ -175,11 +174,11 @@ const LoginPage = () => {
             </button>
 
             {/* Footer */}
-            <p className="text-center text-gray-500 mt-6 font-medium">
+            <p className="text-center text-gray-400 mt-8 font-medium">
               Don&apos;t have an account?{" "}
               <Link
                 href="/register"
-                className="text-primary hover:text-primary-dark font-bold transition-colors"
+                className="text-primary hover:opacity-80 font-black transition-opacity"
               >
                 Create Account
               </Link>
@@ -188,32 +187,23 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE - BRANDING with "Data Stream" Animation */}
-      <div className="hidden lg:flex lg:w-1/2 bg-secondary relative overflow-hidden items-center justify-center p-12">
-        {/* Dark Overlay/Grid for Tech feel */}
+      {/* RIGHT SIDE - BRANDING (Updated Copy) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-secondary relative overflow-hidden items-center justify-center p-16">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[40px_40px]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-size-[40px_40px]"></div>
 
-        {/* --- ANIMATION LAYER: Data Beams flowing Left to Right --- */}
+        {/* Neural Beams Flow */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Beam 1 */}
-          <div className="absolute top-[20%] left-[-20%] w-[150%] h-0.5 bg-linear-to-r from-transparent via-primary/30 to-transparent animate-flow-fast"></div>
-          {/* Beam 2 */}
-          <div className="absolute top-[40%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-primary/20 to-transparent animate-flow-medium delay-700"></div>
-          {/* Beam 3 */}
-          <div className="absolute top-[60%] left-[-20%] w-[150%] h-[3px] bg-linear-to-r from-transparent via-primary/40 to-transparent animate-flow-slow delay-1000"></div>
-          {/* Beam 4 */}
-          <div className="absolute top-[80%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-blue-400/20 to-transparent animate-flow-medium delay-300"></div>
+          <div className="absolute top-[30%] left-[-20%] w-[150%] h-0.5 bg-linear-to-r from-transparent via-primary/20 to-transparent animate-flow-fast"></div>
+          <div className="absolute top-[70%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-primary/10 to-transparent animate-flow-slow delay-1000"></div>
         </div>
 
-        {/* Glow Orb in corner */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4"></div>
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full translate-x-1/4 translate-y-1/4"></div>
 
-        {/* Content Card */}
         <div className="relative z-10 max-w-lg text-white">
-          <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-[0_0_40px_rgba(24,203,150,0.3)]">
+          <div className="mb-10 inline-flex items-center justify-center w-20 h-20 rounded-4xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
             <svg
-              className="w-8 h-8 text-primary animate-pulse"
+              className="w-10 h-10 text-primary animate-pulse"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -221,21 +211,22 @@ const LoginPage = () => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                strokeWidth={2.5}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
               />
             </svg>
           </div>
 
-          <h2 className="text-5xl font-bold leading-tight mb-6 tracking-tight">
-            Unlock the power of <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-emerald-300">
-              Multi-Model Intelligence.
+          <h2 className="text-6xl font-black leading-[0.95] mb-8 tracking-tighter">
+            Unlock the world&apos;s <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-emerald-400 to-teal-500">
+              Smartest AI Audit.
             </span>
           </h2>
-          <p className="text-gray-300 text-xl leading-relaxed opacity-90">
-            One login connects you to GPT-5, Gemini, and Grok. Optimize your
-            resume with the combined intelligence of the world&apos;s best AIs.
+          <p className="text-gray-400 text-xl leading-relaxed font-medium">
+            Join the elite tier of candidates. One secure login gives you access
+            to Amanox Pro Intelligence—the most precise resume audit engine ever
+            built.
           </p>
         </div>
       </div>
@@ -255,19 +246,10 @@ const LoginPage = () => {
           }
         }
         .animate-flow-fast {
-          animation: flow 3s linear infinite;
-        }
-        .animate-flow-medium {
-          animation: flow 5s linear infinite;
+          animation: flow 4s linear infinite;
         }
         .animate-flow-slow {
-          animation: flow 7s linear infinite;
-        }
-        .delay-300 {
-          animation-delay: 300ms;
-        }
-        .delay-700 {
-          animation-delay: 700ms;
+          animation: flow 8s linear infinite;
         }
         .delay-1000 {
           animation-delay: 1000ms;

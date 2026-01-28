@@ -1,255 +1,189 @@
 "use client";
 
+import Link from "next/link";
+
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-[#f5f7fb] pt-24 pb-20 font-sans">
-      <div className="max-w-[960px] mx-auto px-6 lg:px-0">
-        <div className="w-full h-0.5 mb-10 bg-linear-to-r from-transparent via-primary to-transparent opacity-60 rounded-full" />
+    <div className="min-h-screen bg-[#FAFAFA] pt-32 pb-20 font-sans selection:bg-primary/20 leading-relaxed">
+      <div className="max-w-[850px] mx-auto px-6">
+        {/* Top Accent Line */}
+        <div className="w-full h-1 mb-12 bg-linear-to-r from-transparent via-primary to-transparent opacity-40 rounded-full" />
 
-        <header className="mb-10">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase text-primary mb-3">
+        {/* Header Section */}
+        <header className="mb-16">
+          <p className="text-[10px] font-black tracking-[0.3em] uppercase text-primary mb-4">
             Terms of Service
           </p>
-          <h1 className="text-3xl font-bold tracking-tight text-secondary mb-3">
-            The rules for using Amanox AI.
+          <h1 className="text-4xl lg:text-6xl font-black tracking-tighter text-secondary mb-6 leading-none">
+            The Rules of <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-emerald-400 to-teal-600">
+              Amanox Pro.
+            </span>
           </h1>
-          <p className="text-sm text-gray-600">
-            By creating an account or using the platform, you agree to these
-            terms. Please read them carefully before using Amanox.
+          <p className="text-lg text-gray-500 font-medium max-w-2xl leading-relaxed">
+            By using our platform, you agree to follow these simple rules. We
+            keep them clear so you know exactly what to expect.
           </p>
-          <p className="mt-2 text-[11px] text-gray-500">
-            Last updated: {new Date().toLocaleDateString()}
+          <p className="mt-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            Last Updated: {new Date().toLocaleDateString()}
           </p>
         </header>
 
-        <div className="space-y-8 text-sm text-gray-700 leading-relaxed">
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              1. Your relationship with Amanox
+        {/* Content Body */}
+        <div className="space-y-12 text-gray-600">
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                01.
+              </span>
+              Our Relationship
             </h2>
-            <p>
-              These Terms of Service (&quot;Terms&quot;) form a contract between
-              you and Amanox AI (&quot;Amanox&quot;, &quot;we&quot;,
-              &quot;our&quot;). They govern your access to and use of our
-              website, web application and related services (collectively, the
-              &quot;Service&quot;).
+            <p className="font-medium text-gray-500">
+              Amanox Pro is an AI-powered service. When you create an account,
+              you are entering into a legal agreement with us. These terms apply
+              to all visitors and users of the platform.
             </p>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              2. Eligibility and accounts
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                02.
+              </span>
+              Account Rules
             </h2>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                You must be legally able to form a contract in your region.
-              </li>
-              <li>
-                You are responsible for keeping your login credentials secure
-                and for all activity under your account.
-              </li>
-              <li>
-                You agree to provide accurate information and promptly update it
-                if it changes.
-              </li>
-              <li>
-                We may offer different account types, such as candidate and
-                recruiter accounts. You agree to use the appropriate type for
-                your role.
-              </li>
+            <div className="grid gap-6 mt-6">
+              {[
+                {
+                  title: "One User per Account",
+                  body: "You are responsible for keeping your login and password safe. Do not share your account with others.",
+                },
+                {
+                  title: "True Information",
+                  body: "You agree to provide real information when you sign up. Fake accounts may be suspended.",
+                },
+                {
+                  title: "Age Requirement",
+                  body: "You must be at least 18 years old (or the legal age in your country) to use this service.",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm"
+                >
+                  <h4 className="font-black text-secondary text-sm mb-1 uppercase tracking-tight">
+                    {item.title}
+                  </h4>
+                  <p className="text-sm text-gray-500 font-medium">
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                03.
+              </span>
+              Proper Use
+            </h2>
+            <p className="font-medium text-gray-500 mb-6">
+              We want Amanox to be a safe place for everyone. You agree NOT to:
+            </p>
+            <ul className="space-y-4">
+              {[
+                "Try to hack, scrape, or break our website.",
+                "Upload viruses or harmful files.",
+                "Use our AI results to make illegal decisions.",
+                "Copy our design, code, or branding without permission.",
+              ].map((text, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 text-sm font-bold text-gray-500"
+                >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full" />{" "}
+                  {text}
+                </li>
+              ))}
             </ul>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              3. Use of the Service
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                04.
+              </span>
+              AI Disclaimer
             </h2>
-            <p className="mb-2">
-              You may use Amanox only in accordance with these Terms and
-              applicable law. You agree not to:
-            </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                reverse engineer, scrape, circumvent access controls or attempt
-                to access non-public areas of the Service;
-              </li>
-              <li>
-                upload malicious files, attempt to interfere with our
-                infrastructure or harm other users&apos; experience;
-              </li>
-              <li>
-                use the Service to generate or distribute unlawful, misleading
-                or discriminatory content;
-              </li>
-              <li>
-                use Amanox outputs as the sole basis for high-stakes decisions
-                without human review (for example, hiring or firing decisions);
-              </li>
-              <li>
-                misrepresent yourself to candidates, recruiters or employers.
-              </li>
-            </ul>
+            <div className="bg-secondary rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+              <p className="text-sm font-bold relative z-10 leading-relaxed mb-4">
+                Our AI gives expert advice, but it is still software. Please
+                remember:
+              </p>
+              <ul className="space-y-3 relative z-10 text-xs font-medium text-gray-300">
+                <li>• AI results are suggestions, not guaranteed facts.</li>
+                <li>
+                  • We are not responsible if you do not get a job after using
+                  our tool.
+                </li>
+                <li>
+                  • Always double-check your resume before sending it to an
+                  employer.
+                </li>
+              </ul>
+              <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[60px]" />
+            </div>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              4. AI-generated content
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                05.
+              </span>
+              Coins & Payments
             </h2>
-            <p className="mb-2">
-              Amanox uses third-party AI models to generate scores, summaries
-              and suggestions. These outputs are:
-            </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                generated automatically based on the data you provide (such as
-                your resume and job descriptions);
-              </li>
-              <li>
-                not guaranteed to be accurate, complete or suitable for every
-                situation;
-              </li>
-              <li>
-                intended as guidance, not as professional, legal or hiring
-                advice.
-              </li>
-            </ul>
-            <p className="mt-2">
-              You are responsible for reviewing AI-generated content before
-              using it in applications, job posts or any other context.
+            <p className="font-medium text-gray-500">
+              Amanox Pro uses a coin system for audits. Each audit costs 10
+              coins. Once coins are used for an audit, they cannot be refunded.
+              If we change our prices, we will notify you through the app.
             </p>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              5. Privacy and data
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                06.
+              </span>
+              Stopping Service
             </h2>
-            <p className="mb-2">
-              Our{" "}
-              <a
-                href="/privacy-policy"
-                className="text-primary font-semibold hover:text-primary/80"
-              >
+            <p className="font-medium text-gray-500">
+              You can stop using Amanox at any time. We may also stop your
+              access if you break these rules or if we are legally required to
+              do so.
+            </p>
+          </section>
+
+          <hr className="border-gray-100" />
+
+          <section className="text-center py-10">
+            <h2 className="text-2xl font-black text-secondary mb-4 tracking-tight">
+              Need help?
+            </h2>
+            <p className="text-gray-500 font-medium mb-8">
+              By using Amanox, you also agree to our{" "}
+              <Link href="/privacy-policy" className="text-primary underline">
                 Privacy Policy
-              </a>{" "}
-              explains how we collect, use and protect your data. By using the
-              Service, you also agree to the Privacy Policy.
+              </Link>
+              .
             </p>
-            <p>
-              You confirm that you have the right to upload any resume or job
-              content you submit, and that doing so does not violate any
-              confidentiality or contractual obligations.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              6. Intellectual property
-            </h2>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                Amanox owns or licenses all rights to the platform, including
-                software, design, logos and branding.
-              </li>
-              <li>
-                You own your own content (such as resumes and job descriptions)
-                and grant us a limited licence to process it solely to deliver
-                the Service.
-              </li>
-              <li>
-                You may not use our trademarks, branding or interface elements
-                without prior written permission.
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              7. Payment and plans
-            </h2>
-            <p>
-              If we introduce paid plans, separate terms or plan details may
-              apply (such as pricing, billing cycles and cancellation). Where
-              there is a conflict, the plan-specific terms will control for that
-              plan.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              8. Termination
-            </h2>
-            <p className="mb-2">
-              You may stop using Amanox at any time. We may suspend or terminate
-              your access if:
-            </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>you materially breach these Terms;</li>
-              <li>
-                we reasonably believe your use creates risk to other users or to
-                the Service;
-              </li>
-              <li>we are required to do so by law or a legal process.</li>
-            </ul>
-            <p className="mt-2">
-              We may also discontinue or modify parts of the Service. Where
-              reasonable, we will provide notice in advance.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              9. Disclaimers
-            </h2>
-            <p className="mb-2">
-              The Service is provided on an &quot;as-is&quot; and
-              &quot;as-available&quot; basis. To the extent permitted by law, we
-              do not make warranties about:
-            </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>the accuracy or reliability of AI-generated outputs;</li>
-              <li>uninterrupted or error-free operation of the Service;</li>
-              <li>
-                outcomes such as getting hired, receiving interviews or filling
-                roles.
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              10. Limitation of liability
-            </h2>
-            <p>
-              To the maximum extent permitted by law, Amanox and its founders,
-              employees and partners will not be liable for any indirect,
-              incidental, consequential or punitive damages arising out of your
-              use of the Service. Our total liability for any claim related to
-              the Service will not exceed the amount you paid us for the
-              Service, if any, in the 3 months before the claim arose.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              11. Changes to these Terms
-            </h2>
-            <p>
-              We may update these Terms from time to time. When we make material
-              changes, we will update the &quot;Last updated&quot; date and, if
-              appropriate, notify you through the product or by email. If you
-              continue using Amanox after changes take effect, you agree to the
-              updated Terms.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              12. Contact
-            </h2>
-            <p>
-              If you have questions about these Terms, contact us at{" "}
-              <span className="font-semibold">contact@amanox.in</span>.
-            </p>
+            <a
+              href="mailto:contact@amanox.in"
+              className="inline-block px-10 py-4 bg-primary text-white font-black rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20"
+            >
+              Email Support
+            </a>
           </section>
         </div>
       </div>

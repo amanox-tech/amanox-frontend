@@ -1,156 +1,159 @@
 "use client";
 
+import Link from "next/link";
+
 export default function CookiePolicyPage() {
   return (
-    <div className="min-h-screen bg-[#f5f7fb] pt-24 pb-20 font-sans">
-      <div className="max-w-[960px] mx-auto px-6 lg:px-0">
-        <div className="w-full h-0.5 mb-10 bg-linear-to-r from-transparent via-primary to-transparent opacity-60 rounded-full" />
+    <div className="min-h-screen bg-[#FAFAFA] pt-32 pb-20 font-sans selection:bg-primary/20 leading-relaxed">
+      <div className="max-w-[850px] mx-auto px-6">
+        {/* Top Accent Line */}
+        <div className="w-full h-1 mb-12 bg-linear-to-r from-transparent via-primary to-transparent opacity-40 rounded-full" />
 
-        <header className="mb-10">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase text-primary mb-3">
+        {/* Header Section */}
+        <header className="mb-16">
+          <p className="text-[10px] font-black tracking-[0.3em] uppercase text-primary mb-4">
             Cookie Policy
           </p>
-          <h1 className="text-3xl font-bold tracking-tight text-secondary mb-3">
-            How Amanox uses cookies.
+          <h1 className="text-4xl lg:text-6xl font-black tracking-tighter text-secondary mb-6 leading-none">
+            How we use <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-emerald-400 to-teal-600">
+              Cookies.
+            </span>
           </h1>
-          <p className="text-sm text-gray-600">
-            This policy explains what cookies and similar technologies we use,
-            why we use them, and the options you have.
+          <p className="text-lg text-gray-500 font-medium max-w-2xl leading-relaxed">
+            Cookies are small files that help our website work properly. They
+            help us keep you logged in and ensure your data stays safe.
           </p>
-          <p className="mt-2 text-[11px] text-gray-500">
-            Last updated: {new Date().toLocaleDateString()}
+          <p className="mt-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            Last Updated: {new Date().toLocaleDateString()}
           </p>
         </header>
 
-        <div className="space-y-8 text-sm text-gray-700 leading-relaxed">
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              1. What are cookies?
+        {/* Content Body */}
+        <div className="space-y-12 text-gray-600">
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                01.
+              </span>
+              What are Cookies?
             </h2>
-            <p>
-              Cookies are small text files stored on your device when you visit
-              a website. They help websites remember information about your
-              session and preferences. Similar technologies include local
-              storage, session storage and tokens stored in your browser.
+            <p className="font-medium text-gray-500">
+              Think of cookies as a memory for a website. When you visit Amanox,
+              we use these small text files to remember who you are so you
+              don&apos;t have to log in every single time you change a page.
             </p>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              2. How we use cookies
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                02.
+              </span>
+              Why we use them
             </h2>
-            <p className="mb-2">
-              Amanox uses cookies and similar technologies for the following
-              purposes:
+            <div className="grid gap-6 mt-6">
+              {[
+                {
+                  title: "Keeping You Logged In",
+                  body: "We use cookies to identify your session. Without these, you would be logged out instantly.",
+                },
+                {
+                  title: "Account Safety",
+                  body: "Cookies help us stop hackers from trying to access your account or sending fake requests.",
+                },
+                {
+                  title: "Your Preferences",
+                  body: "We remember if you prefer certain settings so the app feels right every time you open it.",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <h4 className="font-black text-secondary text-sm mb-1 uppercase tracking-tight">
+                    {item.title}
+                  </h4>
+                  <p className="text-sm text-gray-500 font-medium">
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                03.
+              </span>
+              Strictly Necessary
+            </h2>
+            <p className="font-medium text-gray-500 mb-6">
+              Some cookies are **mandatory**. If you turn these off in your
+              browser, Amanox Pro will not function. These are used for:
             </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                <span className="font-semibold">Authentication.</span> To keep
-                you logged in securely using access and refresh tokens.
-              </li>
-              <li>
-                <span className="font-semibold">Session management.</span> To
-                remember your current session, role (candidate/recruiter) and
-                basic preferences while you use the product.
-              </li>
-              <li>
-                <span className="font-semibold">Security.</span> To help prevent
-                abuse, such as rate-limiting repeated login attempts and storing
-                CSRF protection tokens.
-              </li>
-              <li>
-                <span className="font-semibold">Product performance.</span> To
-                support basic analytics and debugging, such as understanding
-                which features are used most, if we enable such tools.
-              </li>
+            <ul className="space-y-4">
+              {[
+                "Login & Authentication tokens.",
+                "Security & Fraud prevention.",
+                "Basic site performance.",
+              ].map((text, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 text-sm font-bold text-gray-500"
+                >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_rgba(24,203,150,0.6)]" />{" "}
+                  {text}
+                </li>
+              ))}
             </ul>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              3. Types of cookies we use
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                04.
+              </span>
+              Your Choices
             </h2>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                <span className="font-semibold">
-                  Strictly necessary cookies.
-                </span>{" "}
-                Required for the site to function (for example, authentication
-                and CSRF cookies). You cannot opt out of these without breaking
-                core functionality.
-              </li>
-              <li>
-                <span className="font-semibold">Preference cookies.</span> Used
-                to remember choices such as interface options or dismissing
-                in-app banners.
-              </li>
-              <li>
-                <span className="font-semibold">
-                  Optional analytics cookies.
-                </span>{" "}
-                If enabled, these help us understand usage patterns so we can
-                improve the product. We aim to use privacy-respecting tools and,
-                where required, will ask for your consent.
-              </li>
-            </ul>
+            <p className="font-medium text-gray-500 mb-4">
+              You can choose to delete or block cookies through your browser
+              settings. However, please remember:
+            </p>
+            <div className="bg-secondary rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+              <p className="text-sm font-bold relative z-10 leading-relaxed italic">
+                &quot;If you block all cookies, you will not be able to log in
+                to your account or use the Amanox Pro Audit tool.&quot;
+              </p>
+              <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[60px]" />
+            </div>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              4. Third-party cookies
-            </h2>
-            <p>
-              Some cookies may be set by third-party services integrated into
-              Amanox (for example, analytics providers or authentication
-              services). These providers have their own privacy and cookie
-              policies, and we encourage you to review them.
-            </p>
-          </section>
+          <hr className="border-gray-100" />
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              5. Your choices
+          <section className="text-center py-10">
+            <h2 className="text-2xl font-black text-secondary mb-4 tracking-tight">
+              Need more info?
             </h2>
-            <p className="mb-2">
-              You have several options for managing cookies and similar
-              technologies:
+            <p className="text-gray-500 font-medium mb-8">
+              If you have more questions about your privacy, we are happy to
+              help.
             </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                Configure your browser settings to block or delete cookies.
-                Doing this may impact your ability to log in or use some
-                features.
-              </li>
-              <li>
-                Use built-in browser tools or extensions to manage tracking
-                technologies, where available.
-              </li>
-              <li>
-                If we present cookie banners or preference centres, you can use
-                those to control optional cookies (such as analytics).
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              6. Updates
-            </h2>
-            <p>
-              We may update this Cookie Policy as our use of cookies evolves or
-              as legal requirements change. Any changes will be reflected by
-              updating the &quot;Last updated&quot; date above.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              7. Contact
-            </h2>
-            <p>
-              If you have questions about our use of cookies, contact{" "}
-              <span className="font-semibold">contact@amanox.in</span>.
-            </p>
+            <div className="flex justify-center gap-4">
+              <Link
+                href="/privacy-policy"
+                className="px-8 py-4 bg-gray-50 border border-gray-100 text-secondary font-black rounded-2xl text-xs uppercase tracking-widest hover:bg-gray-100 transition-all"
+              >
+                Privacy Policy
+              </Link>
+              <a
+                href="mailto:contact@amanox.in"
+                className="px-8 py-4 bg-primary text-white font-black rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20"
+              >
+                Email Us
+              </a>
+            </div>
           </section>
         </div>
       </div>

@@ -1,49 +1,50 @@
 import "./globals.css";
 import { AppProvider } from "@/context/appContext";
 import { ReactNode } from "react";
-// 1. IMPORT REACT HOT TOAST
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Amanox – Free AI Resume Analyzer | GPT-5, Gemini, Grok Powered",
+  // Simple, powerful title
+  title: "Amanox Pro | The World's Most Accurate AI Resume Audit",
   description:
-    "Analyze your resume with Amanox AI — a powerful multi-model engine using GPT-5, Gemini, and Grok. Get ATS score, job match score, missing keywords, impact improvements, recruiter-level insights, and professional rewrites for free.",
+    "Audit your resume with Amanox Pro Intelligence. Get deep-reasoning ATS scores, precision job matching, and recruiter-level insights to land more interviews.",
   keywords: [
-    "AI resume analyzer",
+    "AI resume audit",
+    "Amanox Pro",
     "ATS resume checker",
-    "resume score checker",
-    "GPT-5 resume analysis",
-    "AI resume builder",
-    "resume keyword checker",
+    "professional resume analysis",
+    "resume keyword audit",
     "job description match",
-    "resume improvement tool",
-    "AI job seeker tools",
-    "Amanox Resume",
-    "Grok resume analysis",
-    "Gemini resume checker",
-    " resume ats",
+    "AI career coach",
+    "resume score checker",
+    "Amanox AI",
   ],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="antialiased">
         <AppProvider>
           <Navbar />
-          <main className="min-h-screen relative">{children}</main>
+          {/* Main container with Turquoise selection color */}
+          <main className="min-h-screen relative selection:bg-primary/20">
+            {children}
+          </main>
           <Footer />
         </AppProvider>
 
+        {/* Premium Styled Toaster */}
         <Toaster
           position="top-right"
           reverseOrder={false}
           toastOptions={{
             duration: 4000,
+            // Updated to match your Turquoise and Charcoal theme
             className:
-              "!bg-white/80 !backdrop-blur-lg !border !border-white/60 !shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] !rounded-2xl !px-5 !py-4 !text-sm !font-semibold !text-secondary !font-sans",
+              "!bg-white/90 !backdrop-blur-xl !border !border-gray-100 !shadow-2xl !rounded-[1.5rem] !px-6 !py-4 !text-sm !font-black !text-secondary !font-sans",
 
             style: {
               color: "#373643",
@@ -51,7 +52,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
             success: {
               iconTheme: {
-                primary: "#18cb96",
+                primary: "#18cb96", // Your Turquoise
                 secondary: "white",
               },
             },
