@@ -4,123 +4,111 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#f5f7fb] pt-24 pb-20 font-sans">
+    <div className="min-h-screen bg-[#f5f7fb] pt-32 pb-20 font-sans selection:bg-primary/20">
       <div className="max-w-[1120px] mx-auto px-6 lg:px-0">
         {/* Top accent line */}
-        <div className="w-full h-0.5 mb-10 bg-linear-to-r from-transparent via-primary to-transparent opacity-60 rounded-full" />
+        <div className="w-full h-1 mb-12 bg-linear-to-r from-transparent via-primary to-transparent opacity-40 rounded-full" />
 
-        {/* Hero */}
-        <section className="mb-14">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase text-primary mb-3">
-            About Amanox Platform
+        {/* Hero Section - Simple English */}
+        <section className="mb-16">
+          <p className="text-[10px] font-black tracking-[0.3em] uppercase text-primary mb-4">
+            Amanox Pro Intelligence
           </p>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-secondary mb-5">
-            We help every resume speak at{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-emerald-300">
-              expert level.
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-secondary mb-6 leading-[0.95]">
+            We help you build a <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-emerald-400 to-teal-600">
+              perfect resume.
             </span>
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-3xl leading-relaxed">
-            Amanox AI is your personal panel of top AI models – working together
-            to analyse your resume, spotlight your strengths, and highlight the
-            gaps that matter. Instead of generic feedback, you get a clear,
-            multi-angle report that shows what a hiring manager would see.
+          <p className="text-lg sm:text-xl text-gray-500 max-w-3xl leading-relaxed font-medium">
+            Amanox is a high-end AI tool designed to check your resume like a
+            professional recruiter. We find the small mistakes and big gaps that
+            stop you from getting hired.
           </p>
         </section>
 
-        {/* 3 columns: Problem / Solution / Philosophy */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm shadow-gray-100/60 p-6">
-            <p className="text-xs font-semibold text-primary/80 tracking-[0.18em] uppercase mb-3">
+        {/* 3 columns: Why / How / Goal */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 group hover:shadow-xl transition-all duration-500">
+            <h3 className="font-black text-secondary mb-4 text-xl tracking-tight">
               The Problem
-            </p>
-            <h3 className="font-semibold text-secondary mb-3">
-              Great skills, weak signalling.
             </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Most resumes undersell the person behind them. Wrong keywords,
-              vague bullet points and poor formatting stop strong candidates
-              from passing ATS filters or impressing recruiters.
+            <p className="text-sm text-gray-500 leading-relaxed font-medium">
+              Most resumes are not read by humans first—they are scanned by
+              software. If your resume has the wrong words or bad formatting,
+              you will never get an interview.
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm shadow-gray-100/60 p-6">
-            <p className="text-xs font-semibold text-primary/80 tracking-[0.18em] uppercase mb-3">
-              Our Approach
-            </p>
-            <h3 className="font-semibold text-secondary mb-3">
-              Multi-model resume intelligence.
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 group hover:shadow-xl transition-all duration-500">
+            <h3 className="font-black text-secondary mb-4 text-xl tracking-tight">
+              Our Solution
             </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              You upload your resume, choose an expert panel (GPT-5, Gemini,
-              Grok and more), and Amanox blends their insights into a single,
-              actionable report: score, missing skills, keyword gaps and
-              suggested rewrites.
+            <p className="text-sm text-gray-500 leading-relaxed font-medium">
+              We use elite AI intelligence to scan your resume. We give you a
+              score, find missing skills, and rewrite your sentences to make
+              them sound professional.
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm shadow-gray-100/60 p-6">
-            <p className="text-xs font-semibold text-primary/80 tracking-[0.18em] uppercase mb-3">
-              Our Philosophy
-            </p>
-            <h3 className="font-semibold text-secondary mb-3">
-              AI as your career co-pilot.
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 group hover:shadow-xl transition-all duration-500">
+            <h3 className="font-black text-secondary mb-4 text-xl tracking-tight">
+              Our Goal
             </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              We don&apos;t replace your judgement; we amplify it. Amanox gives
-              you clear, honest feedback so you can decide what to keep, what to
-              rewrite and how to position yourself for the roles you actually
-              want.
+            <p className="text-sm text-gray-500 leading-relaxed font-medium">
+              We want to give every candidate the same advantage that experts
+              have. With Amanox, you can apply for any job with total
+              confidence.
             </p>
           </div>
         </section>
 
-        {/* How it works */}
-        <section className="mb-16">
-          <div className="flex items-center justify-between gap-4 mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-secondary">
-              How Amanox works
+        {/* How it works - Removed Model Mentions */}
+        <section className="mb-20">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <h2 className="text-3xl font-black text-secondary tracking-tighter">
+              How Amanox Works
             </h2>
-            <span className="inline-flex items-center gap-2 text-xs font-semibold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Multi-model, job-aware analysis
+            <span className="inline-flex items-center gap-2 text-[10px] font-black text-primary bg-primary/10 border border-primary/20 px-5 py-2 rounded-full uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              Professional Grade Audit
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[
               {
                 step: "01",
-                title: "Upload your resume",
-                body: "Drop a PDF or DOCX and we safely process the text without permanently storing your file.",
+                title: "Upload Resume",
+                body: "Drop your PDF file. We read the text safely and never keep your files.",
               },
               {
                 step: "02",
-                title: "Pick your expert panel",
-                body: "Combine models like GPT-5, Gemini and Grok to review your profile from different angles.",
+                title: "AI Audit",
+                body: "Our smart engine checks your resume for mistakes and impact.",
               },
               {
                 step: "03",
-                title: "Add the target job",
-                body: "Paste a job description to see match score, missing keywords and role-specific feedback.",
+                title: "Job Match",
+                body: "Paste a job link to see if you are a good fit for that specific role.",
               },
               {
                 step: "04",
-                title: "Apply with confidence",
-                body: "Use our suggested rewrites and keyword insights to ship a sharper, more focused resume.",
+                title: "Fix & Apply",
+                body: "Use our tips to fix your resume and start applying to companies.",
               },
             ].map((item) => (
               <div
                 key={item.step}
-                className="relative bg-white rounded-2xl border border-gray-100 shadow-[0_18px_45px_-22px_rgba(15,23,42,0.25)] p-5"
+                className="relative bg-white rounded-3xl border border-gray-50 shadow-sm p-8 hover:-translate-y-2 transition-all duration-500"
               >
-                <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-primary/10 text-[11px] font-bold text-primary mb-4">
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-primary/10 text-xs font-black text-primary mb-6">
                   {item.step}
                 </span>
-                <h3 className="font-semibold text-secondary mb-2 text-sm">
+                <h3 className="font-black text-secondary mb-3 text-base">
                   {item.title}
                 </h3>
-                <p className="text-xs text-gray-600 leading-relaxed">
+                <p className="text-xs text-gray-500 leading-relaxed font-medium">
                   {item.body}
                 </p>
               </div>
@@ -128,107 +116,50 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Candidate vs Recruiter */}
-        <section className="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 relative overflow-hidden">
-            <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-primary/10 blur-3xl" />
-            <h2 className="text-lg font-bold text-secondary mb-2">
-              Built for candidates.
-            </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Whether you&apos;re a student, mid-career professional or career
-              switcher, Amanox translates AI feedback into plain language you
-              can act on.
-            </p>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-start gap-2">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary" />
-                <span>
-                  Clear resume score with breakdown across impact, skills and
-                  formatting.
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary" />
-                <span>
-                  Suggested rewrites that keep your voice but sharpen your
-                  positioning.
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary" />
-                <span>
-                  Target-job mode to see how well you fit a specific role.
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="bg-secondary text-white rounded-2xl shadow-[0_18px_45px_-22px_rgba(15,23,42,0.7)] p-6 relative overflow-hidden">
-            <div className="absolute -bottom-24 -right-20 w-56 h-56 rounded-full bg-primary/25 blur-3xl" />
-            <h2 className="text-lg font-bold mb-2">
-              Designed for recruiters (coming soon).
-            </h2>
-            <p className="text-sm text-gray-100/80 mb-4">
-              Recruiter accounts get a more critical, signal-focused view:
-              strengths, risks and fit for the role – without fluff.
-            </p>
-            <ul className="space-y-2 text-sm text-gray-100/90">
-              <li className="flex items-start gap-2">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary" />
-                <span>
-                  Objective scoring tuned for screening speed, not candidate
-                  coaching.
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary" />
-                <span>
-                  Keyword and skill coverage aligned with the job description.
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary" />
-                <span>Faster signal on who to prioritise for next steps.</span>
-              </li>
-            </ul>
-          </div>
-        </section>
-
-        {/* Privacy & Trust */}
-        <section className="mb-10">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row items-start md:items-center gap-5">
-            <div className="shrink-0 w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <span className="w-6 h-6 rounded-full border border-primary/40 flex items-center justify-center">
-                <span className="w-2.5 h-2.5 rounded-full bg-primary" />
-              </span>
+        {/* Trust & Privacy Section */}
+        <section className="mb-20">
+          <div className="bg-secondary text-white rounded-[3rem] p-10 lg:p-16 flex flex-col md:flex-row items-center gap-10 relative overflow-hidden shadow-2xl">
+            <div className="shrink-0 w-20 h-20 rounded-4xl bg-primary flex items-center justify-center shadow-[0_0_40px_rgba(24,203,150,0.4)]">
+              <svg
+                className="w-10 h-10 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-secondary mb-2">
-                Privacy by design.
+            <div className="flex-1 relative z-10">
+              <h3 className="text-3xl font-black mb-4 tracking-tighter">
+                Your data is safe.
               </h3>
-              <p className="text-sm text-gray-600 mb-2">
-                We only store what we need to run your account: your name,
-                email, hashed password and basic session data. Resume files are
-                processed in memory and not kept after analysis. We route AI
-                calls through trusted providers and continuously review how data
-                flows through the system.
+              <p className="text-lg text-gray-300 mb-8 font-medium leading-relaxed max-w-2xl">
+                We take privacy very seriously. We do not sell your data. Your
+                resume files are deleted immediately after the analysis is
+                finished. We only store your email to manage your account.
               </p>
-              <div className="flex flex-wrap gap-3 text-xs">
+              <div className="flex flex-wrap gap-4">
                 <Link
                   href="/privacy-policy"
-                  className="inline-flex items-center px-4 py-2 rounded-full border border-gray-200 bg-gray-50 hover:bg-white hover:border-primary/40 text-gray-700 hover:text-primary font-medium transition-all"
+                  className="px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-black uppercase tracking-widest transition-all"
                 >
-                  Read our Privacy Policy
+                  Privacy Policy
                 </Link>
                 <Link
                   href="/terms-policy"
-                  className="inline-flex items-center px-4 py-2 rounded-full border border-transparent bg-secondary hover:bg-black text-white font-semibold transition-all"
+                  className="px-8 py-3 rounded-2xl bg-primary text-white text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20"
                 >
-                  View Terms of Service
+                  Terms of Service
                 </Link>
               </div>
             </div>
+            {/* Background Accent */}
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/10 blur-[100px] rounded-full translate-x-1/2 -translate-y-1/2" />
           </div>
         </section>
       </div>

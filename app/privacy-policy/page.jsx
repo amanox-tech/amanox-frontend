@@ -2,289 +2,169 @@
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-[#f5f7fb] pt-24 pb-20 font-sans">
-      <div className="max-w-[960px] mx-auto px-6 lg:px-0">
-        <div className="w-full h-0.5 mb-10 bg-linear-to-r from-transparent via-primary to-transparent opacity-60 rounded-full" />
+    <div className="min-h-screen bg-[#FAFAFA] pt-32 pb-20 font-sans selection:bg-primary/20 leading-relaxed">
+      <div className="max-w-[850px] mx-auto px-6">
+        {/* Top Accent Line */}
+        <div className="w-full h-1 mb-12 bg-linear-to-r from-transparent via-primary to-transparent opacity-40 rounded-full" />
 
-        <header className="mb-10">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase text-primary mb-3">
-            Privacy Policy
+        {/* Header Section */}
+        <header className="mb-16">
+          <p className="text-[10px] font-black tracking-[0.3em] uppercase text-primary mb-4">
+            Security & Privacy
           </p>
-          <h1 className="text-3xl font-bold tracking-tight text-secondary mb-3">
-            How Amanox AI handles your data.
+          <h1 className="text-4xl lg:text-6xl font-black tracking-tighter text-secondary mb-6 leading-none">
+            Your data is yours. <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-emerald-400 to-teal-600">
+              We just audit it.
+            </span>
           </h1>
-          <p className="text-sm text-gray-600">
-            This policy explains what information we collect, how we use it and
-            the choices you have. We keep our language clear and direct, but
-            this document still has legal effect once you use the service.
+          <p className="text-lg text-gray-500 font-medium max-w-2xl leading-relaxed">
+            We use simple English here because we want you to understand exactly
+            how we handle your information. No confusing legal talk—just clear
+            facts.
           </p>
-          <p className="mt-2 text-[11px] text-gray-500">
-            Last updated: {new Date().toLocaleDateString()}
+          <p className="mt-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            Effective Date: {new Date().toLocaleDateString()}
           </p>
         </header>
 
-        <div className="space-y-8 text-sm text-gray-700 leading-relaxed">
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              1. Who we are
+        {/* Content Body */}
+        <div className="space-y-12 text-gray-600">
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                01.
+              </span>
+              Who we are
             </h2>
-            <p>
-              Amanox AI (&quot;Amanox&quot;, &quot;we&quot;, &quot;our&quot;,
-              &quot;us&quot;) is a platform that analyses resumes using multiple
-              AI models to provide scores, insights and suggested improvements
-              for candidates and recruiters.
+            <p className="font-medium text-gray-500">
+              Amanox Pro is a high-accuracy AI platform that helps job seekers
+              find mistakes in their resumes. We are built for candidates who
+              want an elite, honest audit of their career profiles.
             </p>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              2. Information we collect
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                02.
+              </span>
+              Information we collect
             </h2>
-            <p className="mb-2">We collect the following types of data:</p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                <span className="font-semibold">Account information.</span>{" "}
-                Name, email address, hashed password and user role
-                (candidate/recruiter).
-              </li>
-              <li>
-                <span className="font-semibold">Authentication data.</span>{" "}
-                One-time passwords (OTPs) stored temporarily in Redis for
-                verification, Google OAuth ID tokens (for Google sign-in), and
-                session identifiers.
-              </li>
-              <li>
-                <span className="font-semibold">Usage data.</span> Basic product
-                events such as login activity, analysis requests and feature
-                usage, used to keep the service secure and improve the
-                experience.
-              </li>
-              <li>
-                <span className="font-semibold">
-                  Resume content (temporary).
-                </span>{" "}
-                When you upload a resume, we process the file in memory to
-                extract text and send it to AI providers. We do not store the
-                original file for long-term retention.
-              </li>
-              <li>
-                <span className="font-semibold">Job descriptions.</span> When
-                you paste a target job description, we use it to compute match
-                scores and keyword gaps.
-              </li>
-              <li>
-                <span className="font-semibold">Technical data.</span> IP
-                address, device/browser information and similar data generated
-                by your use of the service, which may be logged for security and
-                debugging.
-              </li>
+            <div className="grid gap-6 mt-6">
+              {[
+                {
+                  title: "Account Details",
+                  body: "We only store your name, email address, and a safely hidden (hashed) password.",
+                },
+                {
+                  title: "Resume Text",
+                  body: "We read your resume to analyze it. We do NOT store your original file for long-term use.",
+                },
+                {
+                  title: "Job Data",
+                  body: "When you paste a job link, we use it to see if you are a good match for that role.",
+                },
+                {
+                  title: "Technical Logs",
+                  body: "We log your IP address temporarily to stop bots and keep our system safe.",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <h4 className="font-black text-secondary text-sm mb-1 uppercase tracking-tight">
+                    {item.title}
+                  </h4>
+                  <p className="text-sm text-gray-500 font-medium">
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                03.
+              </span>
+              How we use your info
+            </h2>
+            <p className="font-medium text-gray-500 mb-6">
+              We only use your information to make the platform work for you.
+              This includes:
+            </p>
+            <ul className="space-y-4">
+              {[
+                "Giving you an accurate resume score and tips.",
+                "Keeping your account secure and sending login codes.",
+                "Improving our AI engine so it gives better advice.",
+                "Answering your support questions.",
+              ].map((text, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 text-sm font-bold text-gray-500"
+                >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_rgba(24,203,150,0.6)]" />{" "}
+                  {text}
+                </li>
+              ))}
             </ul>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              3. How we use your information
+          <section className="group">
+            <h2 className="text-xl font-black text-secondary mb-4 flex items-center gap-3">
+              <span className="text-primary opacity-20 group-hover:opacity-100 transition-opacity">
+                04.
+              </span>
+              Safety first
             </h2>
-            <p className="mb-2">We use your information to:</p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>create and manage your Amanox account;</li>
-              <li>
-                authenticate logins, send OTPs and maintain secure sessions;
-              </li>
-              <li>
-                process resume files and job descriptions to generate scores,
-                insights and suggested rewrites;
-              </li>
-              <li>
-                personalise your experience (for example, candidate vs recruiter
-                views);
-              </li>
-              <li>monitor, debug and improve the platform;</li>
-              <li>
-                communicate with you about product updates, security alerts or
-                support responses.
-              </li>
-            </ul>
+            <p className="font-medium text-gray-500 mb-4">
+              Resumes are personal. We treat them with the highest level of
+              care:
+            </p>
+            <div className="bg-secondary rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+              <ul className="space-y-4 relative z-10">
+                <li className="flex gap-4">
+                  <span className="text-primary font-black">✓</span>
+                  <p className="text-sm font-bold">
+                    We NEVER sell your data to anyone.
+                  </p>
+                </li>
+                <li className="flex gap-4">
+                  <span className="text-primary font-black">✓</span>
+                  <p className="text-sm font-bold">
+                    We NEVER use your resume to train our own AI models.
+                  </p>
+                </li>
+                <li className="flex gap-4">
+                  <span className="text-primary font-black">✓</span>
+                  <p className="text-sm font-bold">
+                    Files are deleted as soon as the audit is finished.
+                  </p>
+                </li>
+              </ul>
+              <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[60px]" />
+            </div>
           </section>
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              4. How we handle resumes and job data
-            </h2>
-            <p className="mb-2">
-              Resumes and job descriptions are sensitive. Our approach is:
-            </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                Resume files are processed in memory for text extraction and
-                analysis.
-              </li>
-              <li>
-                We do not use resume files to train our own models or sell them
-                to third parties.
-              </li>
-              <li>
-                We may log anonymised or aggregated metrics (for example,
-                overall score distributions) to improve the product, but we aim
-                to avoid storing content that directly identifies you.
-              </li>
-            </ul>
-          </section>
+          <hr className="border-gray-100" />
 
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              5. Third-party services and AI providers
+          <section className="text-center py-10">
+            <h2 className="text-2xl font-black text-secondary mb-4 tracking-tight">
+              Questions?
             </h2>
-            <p className="mb-2">
-              We rely on trusted third parties to run Amanox, including:
+            <p className="text-gray-500 font-medium mb-8">
+              We are happy to help you. Reach out to us anytime.
             </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                <span className="font-semibold">AI providers.</span> We call
-                models via providers such as OpenRouter. Resume text and job
-                descriptions may be sent to these APIs so they can generate
-                insights and scores.
-              </li>
-              <li>
-                <span className="font-semibold">Email and OTP delivery.</span>{" "}
-                We use third-party email services to deliver verification links,
-                OTPs and password reset messages.
-              </li>
-              <li>
-                <span className="font-semibold">Infrastructure & storage.</span>{" "}
-                Cloud platforms, databases and Redis used to host the
-                application, store user accounts, sessions and logs.
-              </li>
-            </ul>
-            <p className="mt-2">
-              These providers are only given the data necessary to perform their
-              services, and we aim to choose vendors with strong security
-              practices.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              6. Cookies and similar technologies
-            </h2>
-            <p className="mb-2">
-              We use cookies and related technologies to keep you logged in and
-              protect your account:
-            </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>session cookies for access and refresh tokens;</li>
-              <li>CSRF protection tokens;</li>
-              <li>
-                cookies that remember basic preferences such as interface
-                settings.
-              </li>
-            </ul>
-            <p className="mt-2">
-              For more detail, please see our{" "}
-              <a
-                href="/cookies-policy"
-                className="text-primary font-semibold hover:text-primary/80"
-              >
-                Cookie Policy
-              </a>
-              .
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              7. Legal bases and retention
-            </h2>
-            <p className="mb-2">
-              Where applicable law requires a legal basis (for example in the
-              EU/EEA), we typically rely on:
-            </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>
-                <span className="font-semibold">Performance of a contract</span>{" "}
-                – to operate your account and deliver the service you request.
-              </li>
-              <li>
-                <span className="font-semibold">Legitimate interests</span> – to
-                secure the platform, prevent abuse and understand how the
-                product is used.
-              </li>
-              <li>
-                <span className="font-semibold">Consent</span> – for certain
-                communications or optional analytics where required.
-              </li>
-            </ul>
-            <p className="mt-2">
-              We retain account data for as long as your account is active and
-              for a reasonable period afterwards to comply with legal
-              obligations, resolve disputes and maintain security logs.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              8. Your rights and choices
-            </h2>
-            <p className="mb-2">
-              Depending on your location, you may have rights such as:
-            </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li>accessing the personal data we hold about you;</li>
-              <li>requesting corrections to inaccurate information;</li>
-              <li>
-                requesting deletion of your account and certain associated data;
-              </li>
-              <li>objecting to or restricting certain processing;</li>
-              <li>withdrawing consent where we rely on it.</li>
-            </ul>
-            <p className="mt-2">
-              To exercise any of these rights, contact us at{" "}
-              <span className="font-semibold">contact@amanox.in</span>. We may
-              need to verify your identity before responding.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              9. Security
-            </h2>
-            <p>
-              We use reasonable technical and organisational measures to protect
-              your data, including hashed passwords, token-based authentication
-              and rate-limited OTP flows. No system is perfectly secure, but we
-              actively monitor for abuse and improve our defences over time.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              10. Changes to this policy
-            </h2>
-            <p>
-              We may update this Privacy Policy as our product evolves or legal
-              requirements change. When we make material changes, we will update
-              the &quot;Last updated&quot; date above and, where appropriate,
-              notify you through the product or by email.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-base font-semibold text-secondary mb-2">
-              11. Contact
-            </h2>
-            <p>
-              If you have questions about this policy or how we handle data,
-              please contact{" "}
-              <span className="font-semibold">contact@amanox.in</span> or use
-              the contact form on our{" "}
-              <a
-                href="/contact-us"
-                className="text-primary font-semibold hover:text-primary/80"
-              >
-                Contact page
-              </a>
-              .
-            </p>
+            <a
+              href="mailto:contact@amanox.in"
+              className="inline-block px-10 py-4 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 hover:scale-105 transition-all"
+            >
+              contact@amanox.in
+            </a>
           </section>
         </div>
       </div>

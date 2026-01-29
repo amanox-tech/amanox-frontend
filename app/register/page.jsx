@@ -8,7 +8,7 @@ import api from "@/lib/axiosClient";
 import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
-  const [role, setRole] = useState("candidate"); // Default role
+  const [role, setRole] = useState("candidate");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,17 +37,17 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex font-sans bg-white pt-15 overflow-hidden">
+    <div className="min-h-screen w-full flex font-sans bg-white pt-15 overflow-hidden selection:bg-primary/20">
       {/* LEFT SIDE - FORM */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 lg:px-24 py-12 bg-white text-secondary relative z-20">
         <div className="w-full max-w-[440px]">
           {/* Header */}
           <div className="mb-10 text-center lg:text-left">
-            <h1 className="text-4xl font-bold tracking-tight text-secondary mb-3">
+            <h1 className="text-4xl font-black tracking-tighter text-secondary mb-3">
               Join Amanox
             </h1>
-            <p className="text-gray-500 text-lg">
-              Create your candidate profile to get started.
+            <p className="text-gray-500 text-lg font-medium">
+              Create your account to start your resume audit.
             </p>
           </div>
 
@@ -55,14 +55,13 @@ const RegisterPage = () => {
           <form onSubmit={submitHandler} className="space-y-6">
             {/* Name Field */}
             <div className="group space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">
+              <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
                 Full Name
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  {/* Icon turns Turquoise on focus */}
                   <svg
-                    className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors duration-300"
+                    className="h-5 w-5 text-gray-300 group-focus-within:text-primary transition-colors duration-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -71,14 +70,14 @@ const RegisterPage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
                 </div>
                 <input
                   type="text"
-                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
+                  className="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all duration-300 font-bold text-secondary placeholder-gray-300"
                   placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -89,13 +88,13 @@ const RegisterPage = () => {
 
             {/* Email Field */}
             <div className="group space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">
+              <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors duration-300"
+                    className="h-5 w-5 text-gray-300 group-focus-within:text-primary transition-colors duration-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -104,14 +103,14 @@ const RegisterPage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                       d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
                     />
                   </svg>
                 </div>
                 <input
                   type="email"
-                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
+                  className="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all duration-300 font-bold text-secondary placeholder-gray-300"
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -122,13 +121,13 @@ const RegisterPage = () => {
 
             {/* Password Field */}
             <div className="group space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">
+              <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors duration-300"
+                    className="h-5 w-5 text-gray-300 group-focus-within:text-primary transition-colors duration-300"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -137,15 +136,15 @@ const RegisterPage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
                 </div>
                 <input
                   type="password"
-                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
-                  placeholder="Create a strong password"
+                  className="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all duration-300 font-bold text-secondary placeholder-gray-300"
+                  placeholder="At least 8 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -156,7 +155,7 @@ const RegisterPage = () => {
             {/* Submit Button */}
             <button
               disabled={btnLoading}
-              className="w-full bg-secondary hover:bg-[#232530] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+              className="w-full bg-secondary hover:bg-black text-white font-black py-4 rounded-2xl shadow-xl shadow-secondary/20 hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-500 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
             >
               {btnLoading ? (
                 <>
@@ -173,14 +172,14 @@ const RegisterPage = () => {
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                    ></circle>
+                    />
                     <path
                       className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
+                    />
                   </svg>
-                  <span>Creating Account...</span>
+                  <span>Joining...</span>
                 </>
               ) : (
                 "Create Account"
@@ -188,11 +187,11 @@ const RegisterPage = () => {
             </button>
 
             {/* Footer */}
-            <p className="text-center text-gray-500 mt-6 font-medium">
+            <p className="text-center text-gray-400 mt-8 font-medium">
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-primary hover:text-primary-dark font-bold transition-colors"
+                className="text-primary hover:opacity-80 font-black transition-opacity"
               >
                 Log In
               </Link>
@@ -201,32 +200,23 @@ const RegisterPage = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE - BRANDING with "Data Stream" Animation */}
-      <div className="hidden lg:flex lg:w-1/2 bg-secondary relative overflow-hidden items-center justify-center p-12">
-        {/* Dark Overlay/Grid for Tech feel */}
+      {/* RIGHT SIDE - BRANDING */}
+      <div className="hidden lg:flex lg:w-1/2 bg-secondary relative overflow-hidden items-center justify-center p-16">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[40px_40px]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-size-[40px_40px]"></div>
 
-        {/* --- ANIMATION LAYER: Data Beams flowing Left to Right --- */}
+        {/* Neural Pulse Animation */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Beam 1 */}
-          <div className="absolute top-[20%] left-[-20%] w-[150%] h-0.5 bg-linear-to-r from-transparent via-primary/30 to-transparent animate-flow-fast"></div>
-          {/* Beam 2 */}
-          <div className="absolute top-[40%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-primary/20 to-transparent animate-flow-medium delay-700"></div>
-          {/* Beam 3 */}
-          <div className="absolute top-[60%] left-[-20%] w-[150%] h-[3px] bg-linear-to-r from-transparent via-primary/40 to-transparent animate-flow-slow delay-1000"></div>
-          {/* Beam 4 */}
-          <div className="absolute top-[80%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-blue-400/20 to-transparent animate-flow-medium delay-300"></div>
+          <div className="absolute top-[25%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-primary/20 to-transparent animate-flow-fast"></div>
+          <div className="absolute top-[75%] left-[-20%] w-[150%] h-px bg-linear-to-r from-transparent via-primary/10 to-transparent animate-flow-slow delay-1000"></div>
         </div>
 
-        {/* Glow Orb in corner */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4"></div>
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full translate-x-1/4 -translate-y-1/4"></div>
 
-        {/* Content Card */}
         <div className="relative z-10 max-w-lg text-white">
-          <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-[0_0_40px_rgba(24,203,150,0.3)]">
+          <div className="mb-10 inline-flex items-center justify-center w-20 h-20 rounded-4xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
             <svg
-              className="w-8 h-8 text-primary animate-pulse"
+              className="w-10 h-10 text-primary animate-pulse"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -234,21 +224,21 @@ const RegisterPage = () => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={2.5}
                 d="M13 10V3L4 14h7v7l9-11h-7z"
               />
             </svg>
           </div>
 
-          <h2 className="text-5xl font-bold leading-tight mb-6 tracking-tight">
-            Accelerate your <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-emerald-300">
-              Career Growth.
+          <h2 className="text-6xl font-black leading-[0.95] mb-8 tracking-tighter">
+            Build your <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-emerald-400 to-teal-500">
+              Perfect Career.
             </span>
           </h2>
-          <p className="text-gray-300 text-xl leading-relaxed opacity-90">
-            Join thousands of professionals using Amanox to analyze, optimize,
-            and perfect their resumes.
+          <p className="text-gray-400 text-xl leading-relaxed font-medium">
+            Join thousands of professionals using Amanox Pro Intelligence to fix
+            their resumes and land more interviews.
           </p>
         </div>
       </div>
@@ -268,19 +258,10 @@ const RegisterPage = () => {
           }
         }
         .animate-flow-fast {
-          animation: flow 3s linear infinite;
-        }
-        .animate-flow-medium {
           animation: flow 5s linear infinite;
         }
         .animate-flow-slow {
-          animation: flow 7s linear infinite;
-        }
-        .delay-300 {
-          animation-delay: 300ms;
-        }
-        .delay-700 {
-          animation-delay: 700ms;
+          animation: flow 10s linear infinite;
         }
         .delay-1000 {
           animation-delay: 1000ms;
