@@ -3,26 +3,27 @@ import { NextResponse } from "next/server";
 export function proxy(request) {
   const path = request.nextUrl.pathname;
 
-  const accessToken = request.cookies.get("accessToken");
-  const refreshToken = request.cookies.get("refreshToken");
-  const isAuthenticated = !!accessToken || !!refreshToken;
+  const accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
+
+  const hasSession = !!accessToken || !!refreshToken;
 
   const AUTH_PAGES = ["/login", "/register", "/verify-otp"];
   const isAuthPage = AUTH_PAGES.some((p) => path.startsWith(p));
   const isDashboard = path.startsWith("/dashboard");
 
-  // Always allow verify-email route
+  // Always allow verify-email
   if (path.startsWith("/verify-email")) {
     return NextResponse.next();
   }
 
-  // Already logged in → block login/register/verify
-  if (isAuthenticated && isAuthPage) {
+  // ❌ Only block auth pages if ACCESS token exists
+  if (accessToken && isAuthPage) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // Not logged in → block dashboard
-  if (!isAuthenticated && isDashboard) {
+  // ❌ Block dashboard ONLY if no session at all
+  if (!hasSession && isDashboard) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

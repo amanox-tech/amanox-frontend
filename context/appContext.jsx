@@ -11,17 +11,23 @@ export const AppProvider = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // This function is now robust: it tries to get the user.
-  // If 401 (unauthorized), it simply sets user to null (not logged in).
   const fetchUser = async () => {
     try {
       const { data } = await api.get("/api/v1/user/me");
       setUser(data.user);
       setIsAuth(true);
     } catch {
-      console.log("No active session found");
-      setUser(null);
-      setIsAuth(false);
+      // try refresh once
+      try {
+        await api.post("/api/v1/auth/refresh");
+        const { data } = await api.get("/api/v1/user/me");
+        setUser(data.user);
+        setIsAuth(true);
+        return;
+      } catch {
+        setUser(null);
+        setIsAuth(false);
+      }
     } finally {
       setLoading(false);
     }

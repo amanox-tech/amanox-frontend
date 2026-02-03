@@ -8,14 +8,14 @@ export default function DashboardRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push("/login");
-      } else if (user.role === "recruiter") {
-        router.push("/dashboard/recruiter");
-      } else {
-        router.push("/dashboard/candidate");
-      }
+    if (loading) return;
+
+    if (!user) {
+      router.replace("/login");
+    } else if (user.role === "recruiter") {
+      router.replace("/dashboard/recruiter");
+    } else {
+      router.replace("/dashboard/candidate");
     }
   }, [user, loading, router]);
 
